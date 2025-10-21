@@ -1,5 +1,5 @@
 import express from "express";
-import { PORT } from "./config/env.js";
+import { CLIENT_PORT, PORT } from "./config/env.js";
 import userRouter from "./routes/user.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import connectToDatabase from "./database/mongodb.js";
@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(arcjetMiddleware);
 app.use(
   cors({
-    origin: `http://localhost:${PORT}`,
+    origin: `http://localhost:${CLIENT_PORT}`,
     credentials: true,
   })
 );

@@ -1,4 +1,5 @@
-import { validateAuthForm } from "./definitions";
+import { BASE_URL } from "@/config/index.js";
+import { validateAuthForm } from "../validation/auth.schema.js";
 
 export async function handleSubmitAuth(formData, type, router) {
   // validasi
@@ -8,14 +9,18 @@ export async function handleSubmitAuth(formData, type, router) {
 
   // submit API
   try {
-    const res = await fetch(`/api/auth/${type}`, {
+    const res = await fetch(`${BASE_URL}/auth/sign-in`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
+      credentials: "include",
     });
-
+    const data = await res.json();
+    console.log(data.data);
+    console.log(data.accessToken);
     if (res.ok) {
-      router.push("/dashboard");
+      localStorage.setItem("accessToken", data.data.accessToken);
+      router.push("/profile");
       return { success: true };
     } else {
       const error = await res.json();
