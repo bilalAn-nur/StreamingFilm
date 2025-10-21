@@ -14,7 +14,5 @@ Proyek ini dikembangkan sebagai **portofolio pribadi** untuk menunjukkan kemampu
 | **Database** | [MongoDB](https://mongodb.com) | Penyimpanan data film & pengguna |
 | **Keamanan** | [Arcjet](https://arcjet.com) | Perlindungan API & rate limiting |
 | **Styling** | [Tailwind CSS](https://tailwindcss.com) | Desain responsif & modern |
-| **Data Film** | [TMDB API](https://developer.themoviedb.org) | Sumber data film |
-| **Deployment** | [Vercel](https://vercel.com) & [Render](https://render.com) | Hosting frontend & backend |
 
 ---
