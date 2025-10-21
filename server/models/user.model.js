@@ -26,27 +26,12 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "teacher", "student", "parent", "principal"],
+      enum: ["admin", "user"],
       required: [true, "Role is required"],
     },
     profilePicture: {
       type: String,
       trim: true,
-    },
-    phoneNumber: {
-      type: String,
-      trim: true,
-      match: [/^(?:\+62|62|0)8\d{7,12}$/, "Please fill a valid phone number"],
-      required: [true, "Phone number is required"],
-    },
-    address: {
-      type: String,
-      trim: true,
-      maxlength: [225, "Address must be at most 225 characters long"],
-    },
-    gender: {
-      type: String,
-      enum: ["male", "female"],
     },
   },
   { timestamps: true }

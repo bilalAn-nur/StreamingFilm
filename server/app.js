@@ -4,8 +4,6 @@ import userRouter from "./routes/user.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import connectToDatabase from "./database/mongodb.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
-import gradeRouter from "./routes/grade.routes.js";
-import studentRouter from "./routes/student.routes.js";
 import cookieParser from "cookie-parser";
 import arcjetMiddleware from "./middlewares/arcjet.middleware.js";
 import cors from "cors";
@@ -26,8 +24,6 @@ app.use(
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
-app.use("/api/v1/students", studentRouter);
-app.use("/api/v1/grades", gradeRouter);
 
 app.use(errorMiddleware);
 

@@ -3,12 +3,11 @@ import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import {
-  JWT_SECRET,
-  JWT_EXPIRES_IN,
-  NODE_ENV,
-  REFRESH_MAX_AGE,
+  ACCESS_SECRET,
+  ACCESS_EXPIRES,
+  REFRESH_SECRET,
+  REFRESH_EXPIRES,
 } from "../config/env.js";
-import { generateRefreshTokenPlain, hashToken } from "../utils/token.utils.js";
 import refreshTokenModel from "../models/refreshToken.model.js";
 
 export const signup = async (req, res, next) => {
@@ -16,16 +15,7 @@ export const signup = async (req, res, next) => {
   // session.startTransaction();
 
   try {
-    const {
-      name,
-      email,
-      password,
-      role,
-      profilePicture,
-      phoneNumber,
-      address,
-      gender,
-    } = req.body;
+    const { name, email, password, role, profilePicture } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -47,26 +37,37 @@ export const signup = async (req, res, next) => {
           password: hashedPassword,
           role,
           profilePicture,
-          phoneNumber,
-          address,
-          gender,
         },
       ]
       // { session }
     );
 
-    const token = jwt.sign({ userId: newUsers[0]._id }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
+    const accessToken = jwt.sign({ userId: newUsers[0]._id }, ACCESS_SECRET, {
+      expiresIn: ACCESS_EXPIRES,
+    });
+    const refreshToken = jwt.sign({ userId: newUsers[0]._id }, REFRESH_SECRET, {
+      expiresIn: REFRESH_EXPIRES,
+    });
+
+    await refreshTokenModel.create({
+      token: refreshToken,
+      userId: newUsers[0]._id,
+      userAgent: req.headers["user-agent"] || "unknown",
+      ip: req.ip,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
     // await session.commitTransaction();
     // session.endSession();
-
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+    });
     res.status(201).json({
       success: true,
       message: "User registered successfully",
       data: {
-        token,
+        accessToken,
+        refreshToken,
         user: newUsers[0],
       },
     });
@@ -97,34 +98,32 @@ export const signin = async (req, res, next) => {
     }
 
     // Access Token
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
+    const accessToken = jwt.sign({ userId: user._id }, ACCESS_SECRET, {
+      expiresIn: ACCESS_EXPIRES,
     });
-
     // Refresh Token
-    const refreshPlain = generateRefreshTokenPlain();
-    const refreshHashed = hashToken(refreshPlain);
-    const expiresAt = new Date(Date.now() + REFRESH_MAX_AGE);
+    const refreshToken = jwt.sign({ userId: user._id }, REFRESH_SECRET, {
+      expiresIn: REFRESH_EXPIRES,
+    });
 
+    // Simpan refresh token dengan info device/IP
     await refreshTokenModel.create({
-      token: refreshHashed,
-      user: user._id,
-      expiresAt,
+      token: refreshToken,
+      userId: user._id,
+      userAgent: req.headers["user-agent"] || "unknown",
+      ip: req.ip,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
-    res.cookie("refreshToken", refreshPlain, {
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: REFRESH_MAX_AGE,
-      path: "/auth",
     });
-
     res.status(200).json({
       success: true,
       message: "User signed in successfully",
       data: {
-        token,
+        accessToken,
+        refreshToken,
         user,
       },
     });
@@ -135,21 +134,23 @@ export const signin = async (req, res, next) => {
 
 export const signout = async (req, res, next) => {
   try {
-    const plain = req.cookies?.refreshToken;
-    if (plain) {
-      const hashed = hashToken(plain);
-      await refreshTokenModel.findOneAndUpdate(
-        { token: hashed },
-        { revoked: true }
-      );
-      res.clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/auth",
-      });
+    const token = req.cookies.refreshToken;
+    if (!token) {
+      const error = new Error("Token Not Found");
+      error.statusCode = 404;
+      throw error;
     }
-    return res.status(200).json({ success: true, message: "Signed out" });
+
+    const findToken = await refreshTokenModel.findOne({ token });
+    if (!findToken) {
+      const error = new Error("Refresh Token Not Found!!");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await refreshTokenModel.deleteOne({ token });
+    res.clearCookie("refreshToken", { path: "/api/v1/auth/refresh" });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (err) {
     next(err);
   }
@@ -157,51 +158,23 @@ export const signout = async (req, res, next) => {
 
 export const refresh = async (req, res, next) => {
   try {
-    const plain = req.cookies?.refreshToken;
-    if (!plain)
-      return res
-        .status(401)
-        .json({ success: false, message: "No refresh token" });
+    const token = req.cookies.refreshToken;
+    if (!token) return res.status(401).json({ message: "No refresh token" });
 
-    const hashed = hashToken(plain);
-    const dbToken = await refreshTokenModel.findOne({
-      token: hashed,
-      revoked: false,
-    });
-    if (!dbToken || dbToken.expiresAt < new Date()) {
-      return res
-        .status(403)
-        .json({ success: false, message: "Invalid or expired refresh token" });
+    const tokenDoc = await refreshTokenModel.findOne({ token });
+    if (!tokenDoc)
+      return res.status(403).json({ message: "Invalid refresh token" });
+    if (tokenDoc.expiresAt < new Date()) {
+      await refreshTokenModel.deleteOne({ token });
+      return res.status(403).json({ message: "Refresh token expired" });
     }
 
-    // rotate refresh token: revoke old, create new
-    dbToken.revoked = true;
-    await dbToken.save();
-
-    const newPlain = generateRefreshTokenPlain();
-    const newHashed = hashToken(newPlain);
-    const newExpiresAt = new Date(Date.now() + REFRESH_MAX_AGE);
-    await refreshTokenModel.create({
-      token: newHashed,
-      user: dbToken.user,
-      expiresAt: newExpiresAt,
+    const decoded = jwt.verify(token, REFRESH_SECRET);
+    const accessToken = jwt.sign({ userId: decoded.userId }, ACCESS_SECRET, {
+      expiresIn: ACCESS_EXPIRES,
     });
 
-    // issue new access token
-    const accessToken = jwt.sign({ userId: dbToken.user }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
-    });
-
-    // set cookie baru
-    res.cookie("refreshToken", newPlain, {
-      httpOnly: true,
-      secure: NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: REFRESH_MAX_AGE,
-      path: "/auth",
-    });
-
-    return res.status(200).json({ success: true, accessToken });
+    res.json({ accessToken });
   } catch (err) {
     next(err);
   }
