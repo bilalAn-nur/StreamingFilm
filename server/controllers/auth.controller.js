@@ -149,32 +149,14 @@ export const signout = async (req, res, next) => {
     }
 
     await refreshTokenModel.deleteOne({ token });
-    res.clearCookie("refreshToken", { path: "/api/v1/auth/refresh" });
-    res.status(200).json({ message: "Logged out successfully" });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const refresh = async (req, res, next) => {
-  try {
-    const token = req.cookies.refreshToken;
-    if (!token) return res.status(401).json({ message: "No refresh token" });
-
-    const tokenDoc = await refreshTokenModel.findOne({ token });
-    if (!tokenDoc)
-      return res.status(403).json({ message: "Invalid refresh token" });
-    if (tokenDoc.expiresAt < new Date()) {
-      await refreshTokenModel.deleteOne({ token });
-      return res.status(403).json({ message: "Refresh token expired" });
-    }
-
-    const decoded = jwt.verify(token, REFRESH_SECRET);
-    const accessToken = jwt.sign({ userId: decoded.userId }, ACCESS_SECRET, {
-      expiresIn: ACCESS_EXPIRES,
+    res.clearCookie("refreshToken", {
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
     });
 
-    res.json({ accessToken });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (err) {
     next(err);
   }

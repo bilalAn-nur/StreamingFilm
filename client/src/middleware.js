@@ -3,7 +3,12 @@ import { requireProfile } from "./middleware/profile";
 
 export function middleware(req) {
   const url = req.nextUrl.pathname;
-  if (url.startsWith("/sign-in") || url.startsWith("/sign-up")) {
+  const refreshToken = req.cookies.get("refreshToken")?.value;
+
+  if (
+    url.startsWith("/sign-in") ||
+    (url.startsWith("/sign-up") && refreshToken)
+  ) {
     return requireAuth(req);
   }
 
