@@ -118,6 +118,10 @@ export const signin = async (req, res, next) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
     });
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+    });
+
     res.status(200).json({
       success: true,
       message: "User signed in successfully",

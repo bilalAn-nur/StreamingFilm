@@ -3,13 +3,13 @@ import { NextResponse } from "next/server";
 
 export const requireAuth = async (req) => {
   try {
-    const accessToken = req.headers.get("authorization")?.split(" ")[1];
+    const accessToken = req.cookies.get("accessToken")?.value;
 
     const res = await fetch(`${BASE_URL}/token/verify-token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `refreshToken=${accessToken};`,
+        Cookie: `accessToken=${accessToken};`,
       },
     });
     if (res.ok) {
