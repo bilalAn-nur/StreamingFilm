@@ -1,7 +1,7 @@
 import { BASE_URL } from "@/config/index.js";
 import { validateAuthForm } from "../validation/auth.schema.js";
 
-export async function handleSubmitAuth(formData, type, router) {
+export async function handleSubmitLogin(formData, type, router) {
   // validasi
   const result = validateAuthForm(formData, type);
 
@@ -13,14 +13,11 @@ export async function handleSubmitAuth(formData, type, router) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(formData),
       credentials: "include",
     });
     const data = await res.json();
-    console.log(data.data);
-    console.log(data.accessToken);
     if (res.ok) {
       localStorage.setItem("accessToken", data.data.accessToken);
       router.push("/profile");
@@ -34,6 +31,73 @@ export async function handleSubmitAuth(formData, type, router) {
     }
   } catch (err) {
     alert(err);
+    return {
+      success: false,
+      errors: { form: "Terjadi kesalahan, coba lagi nanti." },
+    };
+  }
+}
+
+export async function handleSubmitRegister(formData, type, router) {
+  const result = validateAuthForm(formData, type);
+
+  if (!result.success) return { success: false, errors: result.errors };
+
+  try {
+    const res = await fetch(`${BASE_URL}/auth/sign-up`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+      credentials: "include",
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem("accessToken", data.data.accessToken);
+      router.push("/profile");
+      return { success: true };
+    } else {
+      return {
+        success: false,
+        errors: { form: data.message || "Terjadi kesalahan saat mendaftar." },
+      };
+    }
+  } catch (err) {
+    alert(err);
+    return {
+      success: false,
+      errors: { form: "Terjadi kesalahan, coba lagi nanti." },
+    };
+  }
+}
+
+export async function handleSubmitForgot(formData, type, router) {
+  const result = validateAuthForm(formData, type);
+
+  if (!result.success) return { success: false, errors: result.errors };
+  try {
+    // contoh request forgot password
+    const res = await fetch(`${BASE_URL}/auth/forgot-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      return { success: true };
+    } else {
+      return {
+        success: false,
+        errors: {
+          form: data.message || "Gagal mengirim email reset password.",
+        },
+      };
+    }
+  } catch (err) {
     return {
       success: false,
       errors: { form: "Terjadi kesalahan, coba lagi nanti." },

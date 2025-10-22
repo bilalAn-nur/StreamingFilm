@@ -15,7 +15,7 @@ export const signup = async (req, res, next) => {
   // session.startTransaction();
 
   try {
-    const { name, email, password, role, profilePicture } = req.body;
+    const { name, email, password } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -35,8 +35,8 @@ export const signup = async (req, res, next) => {
           name,
           email,
           password: hashedPassword,
-          role,
-          profilePicture,
+          role: "user",
+          profilePicture: "null",
         },
       ]
       // { session }
@@ -62,6 +62,11 @@ export const signup = async (req, res, next) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
     });
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+    });
+
     res.status(201).json({
       success: true,
       message: "User registered successfully",

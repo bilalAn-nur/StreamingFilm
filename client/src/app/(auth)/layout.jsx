@@ -6,10 +6,18 @@ import { usePathname } from "next/navigation";
 export default function AuthLayout({ children }) {
   const pathname = usePathname();
 
-  const type = pathname.includes("sign-in") ? "login" : "forgot";
+  const type = pathname.includes("sign-in")
+    ? "login"
+    : pathname.includes("sign-up")
+    ? "register"
+    : "forgot";
 
   const title =
-    type === "login" ? "Sign in to your account" : "Enter your email to reset";
+    type === "login"
+      ? "Sign in to your account"
+      : type === "register"
+      ? "Create your account"
+      : "Enter your email to reset";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0f172a] to-[#071033] p-10 box-border font-sans text-[#0f172a]">
@@ -29,12 +37,20 @@ export default function AuthLayout({ children }) {
         <footer className="mt-[18px] text-center text-xs text-slate-400">
           {type === "login" ? (
             <>
-              <div>Don’t have an account? Contact your administrator.</div>
+              <div>
+                Don’t have an account?{" "}
+                <Link
+                  href="/sign-up"
+                  className="text-indigo-600 hover:underline"
+                >
+                  Sign-up
+                </Link>{" "}
+              </div>
               <div className="mt-2">
                 Forgot Password? {""}
                 <Link
-                  href="/forgot-password"
                   className="text-indigo-600 hover:underline"
+                  href="/forgot-password"
                 >
                   Klik Here
                 </Link>{" "}

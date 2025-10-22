@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-// Schema untuk login/register
-export const authFormSchema = z.object({
+// Schema untuk login
+export const loginFormSchema = z.object({
   email: z
     .string()
     .min(1, { message: "Email is required" })
@@ -14,6 +14,33 @@ export const authFormSchema = z.object({
       message: "Password must contain at least one letter and one number",
     }),
 });
+
+export const registerFormShcema = z
+  .object({
+    name: z.string().min(3, { message: "Name is required" }),
+    email: z
+      .string()
+      .min(1, { message: "Email is required" })
+      .email({ message: "Invalid email format" }),
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters long" })
+      .max(100, { message: "Password must be at most 100 characters long" })
+      .regex(/(?=.*[A-Za-z])(?=.*\d)/, {
+        message: "Password must contain at least one letter and one number",
+      }),
+    password2: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters long" })
+      .max(100, { message: "Password must be at most 100 characters long" })
+      .regex(/(?=.*[A-Za-z])(?=.*\d)/, {
+        message: "Password must contain at least one letter and one number",
+      }),
+  })
+  .refine((data) => data.password === data.password2, {
+    message: "Passwords do not match",
+    path: ["password2"],
+  });
 
 // Schema untuk forgot password (hanya email)
 export const forgotPasswordSchema = z.object({
@@ -29,8 +56,10 @@ export function validateAuthForm(data, type) {
 
   if (type === "forgot") {
     schema = forgotPasswordSchema;
+  } else if (type === "login") {
+    schema = loginFormSchema;
   } else {
-    schema = authFormSchema;
+    schema = registerFormShcema;
   }
 
   const result = schema.safeParse(data);

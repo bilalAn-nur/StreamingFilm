@@ -2,11 +2,20 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Input from "./Input";
-import { handleSubmitAuth } from "@/lib/handlers/auth";
+import {
+  handleSubmitForgot,
+  handleSubmitLogin,
+  handleSubmitRegister,
+} from "@/lib/handlers/auth";
 
 export default function AuthForm({ type }) {
   const router = useRouter();
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    password2: "",
+  });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -18,14 +27,36 @@ export default function AuthForm({ type }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const result = await handleSubmitAuth(formData, type, router);
-    if (!result.success) setErrors(result.errors);
-    else setErrors({});
+
+    let result;
+    if (type === "login") {
+      result = await handleSubmitLogin(formData, type, router);
+    } else if (type === "register") {
+      result = await handleSubmitRegister(formData, type, router);
+    } else {
+      result = await handleSubmitForgot(formData, type, router);
+    }
+    if (!result.success) {
+      console.log(result.errors);
+      setLoading(false);
+      return setErrors(result.errors);
+    }
     setLoading(false);
   };
+
   return (
     <div className="w-full max-w-sm bg-white rounded-2xl">
       <form onSubmit={handleSubmit}>
+        {type == "register" && (
+          <Input
+            label="Full Name"
+            name="name"
+            type="text"
+            value={formData.name}
+            onChange={handleChange}
+            error={errors.name}
+          />
+        )}
         <Input
           label="Email"
           name="email"
@@ -45,6 +76,17 @@ export default function AuthForm({ type }) {
               error={errors.password}
             />
           </>
+        )}
+
+        {type == "register" && (
+          <Input
+            label="Re-Password"
+            name="password2"
+            type="password"
+            value={formData.password2}
+            onChange={handleChange}
+            error={errors.password2}
+          />
         )}
 
         <button
