@@ -160,6 +160,13 @@ export const signout = async (req, res, next) => {
       sameSite: "strict",
     });
 
+    res.clearCookie("accessToken", {
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
     res.status(200).json({ message: "Logged out successfully" });
   } catch (err) {
     next(err);
