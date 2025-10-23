@@ -20,36 +20,33 @@ export default function AuthLayout({ children }) {
       : "Enter your email to reset";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0f172a] to-[#071033] p-10 box-border font-sans text-[#0f172a]">
-      <div className="w-full max-w-sm bg-white rounded-xl p-7 shadow-[0_8px_30px_rgba(2,6,23,0.35),_inset_0_1px_0_rgba(255,255,255,0.6)]">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-black p-10 box-border font-sans text-[#f1f1f1]">
+      <div className="w-full max-w-sm bg-gray-800 rounded-xl p-7 shadow-[0_8px_30px_rgba(0,0,0,0.5),_inset_0_1px_0_rgba(255,255,255,0.1)]">
         <header className="text-center mb-[18px]">
           <div
             aria-hidden
-            className="w-14 h-14 mx-auto mb-3 rounded-lg bg-gradient-to-tr from-blue-600 to-violet-600 flex items-center justify-center text-white font-bold text-xl"
+            className="w-14 h-14 mx-auto mb-3 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold text-xl"
           >
-            SI
+            INFI
           </div>
           <h1 className="m-0 text-[20px] font-semibold">{title}</h1>
         </header>
 
         <main>{children}</main>
 
-        <footer className="mt-[18px] text-center text-xs text-slate-400">
+        <footer className="mt-[18px] text-center text-xs text-gray-400 space-y-2">
           {type === "login" ? (
             <>
               <div>
                 Don’t have an account?{" "}
-                <Link
-                  href="/sign-up"
-                  className="text-indigo-600 hover:underline"
-                >
+                <Link href="/sign-up" className="text-red-500 hover:underline">
                   Sign-up
                 </Link>{" "}
               </div>
-              <div className="mt-2">
-                Forgot Password? {""}
+              <div>
+                Forgot Password?{" "}
                 <Link
-                  className="text-indigo-600 hover:underline"
+                  className="text-red-500 hover:underline"
                   href="/forgot-password"
                 >
                   Klik Here
@@ -59,17 +56,24 @@ export default function AuthLayout({ children }) {
           ) : type === "register" ? (
             <div>
               Already have an account?{" "}
-              <Link href="/sign-in" className="text-indigo-600 hover:underline">
+              <Link href="/sign-in" className="text-red-500 hover:underline">
                 Sign in
               </Link>
             </div>
           ) : (
             <div>
-              <Link href="/sign-in" className="text-indigo-600 hover:underline">
+              <Link href="/sign-in" className="text-red-500 hover:underline">
                 Back To Sign in
               </Link>
             </div>
           )}
+
+          {/* Back to Home */}
+          <div>
+            <Link href="/" className="text-red-500 hover:underline">
+              &larr; Back to Home
+            </Link>
+          </div>
         </footer>
       </div>
     </div>

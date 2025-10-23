@@ -11,7 +11,10 @@ export default function Input({
 }) {
   return (
     <div className="mb-4">
-      <label htmlFor={name} className="block text-sm font-medium mb-1">
+      <label
+        htmlFor={name}
+        className="block text-sm font-medium mb-1 text-white"
+      >
         {label}
       </label>
       <input
@@ -20,11 +23,12 @@ export default function Input({
         type={type}
         value={value}
         onChange={onChange}
-        className={`w-full border rounded-lg p-2.5 focus:ring-2 focus:outline-none ${
+        className={`w-full rounded-lg p-2.5 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
           error
-            ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-blue-500"
+            ? "border border-red-500 focus:ring-red-500"
+            : "border border-gray-600 focus:ring-red-600"
         }`}
+        placeholder={`Enter your ${label.toLowerCase()}`}
         required
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}

@@ -36,8 +36,8 @@ export default function AuthForm({ type }) {
     } else {
       result = await handleSubmitForgot(formData, type, router);
     }
+
     if (!result.success) {
-      console.log(result.errors);
       setLoading(false);
       return setErrors(result.errors);
     }
@@ -45,9 +45,9 @@ export default function AuthForm({ type }) {
   };
 
   return (
-    <div className="w-full max-w-sm bg-white rounded-2xl">
+    <div className="w-full max-w-sm bg-gray-800 rounded-2xl p-6 shadow-lg">
       <form onSubmit={handleSubmit}>
-        {type == "register" && (
+        {type === "register" && (
           <Input
             label="Full Name"
             name="name"
@@ -55,6 +55,7 @@ export default function AuthForm({ type }) {
             value={formData.name}
             onChange={handleChange}
             error={errors.name}
+            className="text-white"
           />
         )}
         <Input
@@ -64,21 +65,20 @@ export default function AuthForm({ type }) {
           value={formData.email}
           onChange={handleChange}
           error={errors.email}
+          className="text-white"
         />
         {type !== "forgot" && (
-          <>
-            <Input
-              label="Password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              error={errors.password}
-            />
-          </>
+          <Input
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            error={errors.password}
+            className="text-white"
+          />
         )}
-
-        {type == "register" && (
+        {type === "register" && (
           <Input
             label="Re-Password"
             name="password2"
@@ -86,16 +86,16 @@ export default function AuthForm({ type }) {
             value={formData.password2}
             onChange={handleChange}
             error={errors.password2}
+            className="text-white"
           />
         )}
 
         <button
           type="submit"
-          className={`w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition flex justify-center items-center`}
-          disabled={loading} // disable button saat loading
+          className={`w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition flex justify-center items-center mt-4`}
+          disabled={loading}
         >
-          {loading ? (
-            // Spinner sederhana
+          {loading && (
             <svg
               className="animate-spin h-5 w-5 text-white mr-2"
               xmlns="http://www.w3.org/2000/svg"
@@ -116,7 +116,7 @@ export default function AuthForm({ type }) {
                 d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
               ></path>
             </svg>
-          ) : null}
+          )}
           {loading
             ? "Processing..."
             : type === "login"

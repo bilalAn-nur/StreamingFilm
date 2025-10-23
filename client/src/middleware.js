@@ -7,7 +7,8 @@ export function middleware(req) {
 
   if (
     url.startsWith("/sign-in") ||
-    (url.startsWith("/sign-up") && refreshToken)
+    url.startsWith("/sign-up") ||
+    (url.startsWith("/forgot-password") && refreshToken)
   ) {
     return requireAuth(req);
   }
@@ -20,5 +21,5 @@ export function middleware(req) {
 
 // Terapkan hanya ke route tertentu
 export const config = {
-  matcher: ["/sign-in", "/register", "/profile/:path*"],
+  matcher: ["/sign-in", "/sign-up", "/forgot-password", "/profile/:path*"],
 };
