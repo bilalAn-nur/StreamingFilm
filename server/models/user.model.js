@@ -33,10 +33,8 @@ const userSchema = new mongoose.Schema(
     profilePicture: {
       type: String,
       trim: true,
-      default: "",
+      default: "https://api.dicebear.com/6.x/bottts/svg?seed=default",
     },
-    watchHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }],
-    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }],
   },
   { timestamps: true }
 );
