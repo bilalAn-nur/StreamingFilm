@@ -27,12 +27,16 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["admin", "user"],
+      default: "user",
       required: [true, "Role is required"],
     },
     profilePicture: {
       type: String,
       trim: true,
+      default: "",
     },
+    watchHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }],
+    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }],
   },
   { timestamps: true }
 );

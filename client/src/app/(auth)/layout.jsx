@@ -27,7 +27,7 @@ export default function AuthLayout({ children }) {
             aria-hidden
             className="w-14 h-14 mx-auto mb-3 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold text-xl"
           >
-            INFI
+            INMA
           </div>
           <h1 className="m-0 text-[20px] font-semibold">{title}</h1>
         </header>

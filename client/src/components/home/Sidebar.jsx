@@ -6,7 +6,7 @@ const Sidebar = () => {
     <div>
       {/* Sidebar untuk desktop */}
       <div className="hidden md:flex flex-col bg-gray-900 text-white w-28 py-6 space-y-6 fixed h-screen items-center">
-        <h1 className="text-red-600 font-bold text-2xl">INFI</h1>
+        <h1 className="text-red-600 font-bold text-2xl">INMA</h1>
         <div className="space-y-12 mt-10">
           <svg
             xmlns="http://www.w3.org/2000/svg"
