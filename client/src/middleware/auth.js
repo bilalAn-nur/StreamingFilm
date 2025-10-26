@@ -4,17 +4,20 @@ import { NextResponse } from "next/server";
 export const requireAuth = async (req) => {
   try {
     const accessToken = req.cookies.get("accessToken")?.value;
+    const refreshToken = req.cookies.get("refreshToken")?.value;
 
     const res = await fetch(`${BASE_URL}/token/verify-token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `accessToken=${accessToken};`,
+        // Cookie: `accessToken=${accessToken}; refreshToken=${refreshToken};`,
       },
+      body: JSON.stringify({
+        accessToken,
+        refreshToken,
+      }),
     });
     const data = await res.json();
-    console.log("Role dari backend:", data);
-
     if (res.ok) {
       if (data.role === "admin") {
         return NextResponse.redirect(new URL("/dashboard", req.url));

@@ -61,10 +61,16 @@ export const signup = async (req, res, next) => {
     // session.endSession();
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+
+      path: "/",
     });
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+
+      path: "/",
     });
 
     res.status(201).json({
@@ -122,9 +128,14 @@ export const signin = async (req, res, next) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
     });
+
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
     });
 
     res.status(200).json({
@@ -162,14 +173,12 @@ export const signout = async (req, res, next) => {
       path: "/",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
     });
 
     res.clearCookie("accessToken", {
       path: "/",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
     });
 
     res.status(200).json({ message: "Logged out successfully" });

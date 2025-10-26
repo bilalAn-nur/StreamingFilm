@@ -27,6 +27,8 @@ export const refresh = async (req, res, next) => {
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
     });
 
     res.json({ accessToken });
@@ -37,8 +39,10 @@ export const refresh = async (req, res, next) => {
 
 export const verifyToken = async (req, res, next) => {
   try {
-    const accessToken = req.cookies.accessToken;
-    const refreshToken = req.cookies.refreshToken;
+    const { accessToken, refreshToken } = req.body;
+
+    // const accessToken = req.cookies.accessToken;
+    // const refreshToken = req.cookies.refreshToken;
 
     if (!accessToken && !refreshToken) {
       return res.status(401).json({ message: "No tokens provided" });
@@ -63,14 +67,15 @@ export const verifyToken = async (req, res, next) => {
       // accessToken tidak valid atau expired, lanjut ke refreshToken
     }
 
-    // 2️⃣ Jika accessToken invalid, periksa refreshToken
-    if (!refreshToken)
+    if (!refreshToken) {
       return res.status(401).json({ message: "No refresh token provided" });
+    }
 
     // Cek apakah refreshToken ada di database
     const tokenDoc = await refreshTokenModel.findOne({ token: refreshToken });
-    if (!tokenDoc)
+    if (!tokenDoc) {
       return res.status(403).json({ message: "Invalid refresh token" });
+    }
 
     // Cek apakah refreshToken sudah expired
     if (tokenDoc.expiresAt < new Date()) {
@@ -89,16 +94,19 @@ export const verifyToken = async (req, res, next) => {
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      path: "/",
     });
 
     const user = await User.findById(decodedRefresh.userId).select("role");
     req.user = { id: decodedRefresh.userId, role: user.role };
-    console.log(user);
     // return res.status(200).json({ valid: true, role: user.role });
 
-    return res
-      .status(200)
-      .json({ valid: true, renewed: true, role: user.role });
+    return res.status(200).json({
+      valid: true,
+      renewed: true,
+      accessToken: newAccessToken,
+      role: user.role,
+    });
   } catch (err) {
     console.error(err);
     next(err);

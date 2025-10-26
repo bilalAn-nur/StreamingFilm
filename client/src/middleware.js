@@ -13,7 +13,6 @@ export function middleware(req) {
     return requireAuth(req);
   }
 
-  // halaman protected
   if (url.startsWith("/profile") || url.startsWith("/dashboard")) {
     return requireProfile(req);
   }
