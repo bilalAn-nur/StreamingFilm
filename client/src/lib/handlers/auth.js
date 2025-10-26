@@ -104,3 +104,26 @@ export async function handleSubmitForgot(formData, type, router) {
     };
   }
 }
+
+export async function handleSubmitLogout(formData, type, router) {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/sign-out`, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (res.ok) {
+      // Hapus accessToken dari localStorage
+      localStorage.removeItem("accessToken");
+
+      // Arahkan kembali ke halaman login
+      window.location.href = "/sign-in";
+    } else {
+      const data = await res.json();
+      alert(data.message || "Logout gagal");
+    }
+  } catch (error) {
+    console.error("Logout error:", error);
+    alert("Terjadi kesalahan saat logout");
+  }
+}

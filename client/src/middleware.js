@@ -14,12 +14,18 @@ export function middleware(req) {
   }
 
   // halaman protected
-  if (url.startsWith("/profile")) {
+  if (url.startsWith("/profile") || url.startsWith("/dashboard")) {
     return requireProfile(req);
   }
 }
 
 // Terapkan hanya ke route tertentu
 export const config = {
-  matcher: ["/sign-in", "/sign-up", "/forgot-password", "/profile/:path*"],
+  matcher: [
+    "/sign-in",
+    "/sign-up",
+    "/forgot-password",
+    "/profile/:path*",
+    "/dashboard/:path*",
+  ],
 };
