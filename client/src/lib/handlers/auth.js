@@ -1,45 +1,47 @@
 import { BASE_URL } from "@/config/index.js";
 import { validateAuthForm } from "../validation/auth.schema.js";
 
-export async function handleSubmitLogin(formData, type, router) {
-  // validasi
-  const result = validateAuthForm(formData, type);
-
-  if (!result.success) return { success: false, errors: result.errors };
-
-  // submit API
+export async function handleSubmitLogin(
+  formData,
+  type,
+  router,
+  setNotification
+) {
   try {
     const res = await fetch(`${BASE_URL}/auth/sign-in`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
       credentials: "include",
     });
+
     const data = await res.json();
+
     if (res.ok) {
+      // simpan token
       localStorage.setItem("accessToken", data.data.accessToken);
+
+      // notifikasi sukses
+      // if (setNotification) setNotification("Login berhasil!", "success");
+
       const role = data.data.user.role;
-      if (role === "admin") {
-        router.push("/dashboard");
-      } else {
-        router.push("/profile");
-      }
+      if (role === "admin") router.push("/dashboard");
+      else router.push("/profile");
+
       return { success: true };
     } else {
-      const error = await res.json();
-      return {
-        success: false,
-        errors: { form: error.message || "Email atau password salah!" },
-      };
+      // ambil langsung error dari backend
+      if (setNotification)
+        setNotification(data.error || "Terjadi kesalahan", "error");
+      return { success: false, errors: { form: data.error } };
     }
   } catch (err) {
-    alert(err);
-    return {
-      success: false,
-      errors: { form: "Terjadi kesalahan, coba lagi nanti." },
-    };
+    if (setNotification)
+      setNotification(
+        err.message || "Terjadi kesalahan, coba lagi nanti",
+        "error"
+      );
+    return { success: false, errors: { form: err.message } };
   }
 }
 
@@ -70,7 +72,6 @@ export async function handleSubmitRegister(formData, type, router) {
       };
     }
   } catch (err) {
-    alert(err);
     return {
       success: false,
       errors: { form: "Terjadi kesalahan, coba lagi nanti." },
@@ -125,10 +126,10 @@ export async function handleSubmitLogout(formData, type, router) {
       window.location.href = "/sign-in";
     } else {
       const data = await res.json();
-      alert(data.message || "Logout gagal");
+      console.log(data.message || "Logout gagal");
     }
   } catch (error) {
     console.error("Logout error:", error);
-    alert("Terjadi kesalahan saat logout");
+    console.log("Terjadi kesalahan saat logout");
   }
 }

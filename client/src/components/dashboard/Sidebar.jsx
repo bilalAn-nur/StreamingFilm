@@ -49,7 +49,7 @@ export default function Sidebar() {
   return (
     <aside className="hidden md:flex flex-col w-64 bg-gray-900 text-gray-300 h-screen fixed left-0 top-0 p-6 border-r border-gray-800">
       <div className="text-2xl font-extrabold text-red-500 mb-10 text-center">
-        INFI ADMIN
+        INMA ADMIN
       </div>
       <nav className="flex flex-col space-y-2">
         {links.map((link) => (

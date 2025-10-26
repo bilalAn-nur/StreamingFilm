@@ -7,6 +7,7 @@ import {
   handleSubmitLogin,
   handleSubmitRegister,
 } from "@/lib/handlers/auth";
+import Notification from "../home/Notification";
 
 export default function AuthForm({ type }) {
   const router = useRouter();
@@ -18,34 +19,54 @@ export default function AuthForm({ type }) {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [notification, setNotification] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   let result;
+
+  //   try {
+  //     if (type === "login")
+  //       result = await handleSubmitLogin(formData, type, router);
+  //     else if (type === "register")
+  //       result = await handleSubmitRegister(formData, type, router);
+  //     else result = await handleSubmitForgot(formData, type, router);
+
+  //     if (!result.success) {
+  //       setErrors(result.errors);
+  //       setNotification(result.errors.form || "Terjadi error!");
+  //     } else {
+  //       setNotification("Berhasil!");
+  //     }
+  //   } catch (err) {
+  //     setNotification("Terjadi kesalahan, coba lagi nanti.");
+  //     console.error(err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    let result;
-    if (type === "login") {
-      result = await handleSubmitLogin(formData, type, router);
-    } else if (type === "register") {
-      result = await handleSubmitRegister(formData, type, router);
-    } else {
-      result = await handleSubmitForgot(formData, type, router);
-    }
+    await handleSubmitLogin(formData, type, router, setNotification);
 
-    if (!result.success) {
-      setLoading(false);
-      return setErrors(result.errors);
-    }
     setLoading(false);
   };
-
   return (
     <div className="w-full max-w-sm bg-gray-800 rounded-2xl p-6 shadow-lg">
+      <Notification
+        message={notification?.message || notification}
+        type={notification?.type || "error"}
+        onClose={() => setNotification(null)}
+      />
       <form onSubmit={handleSubmit}>
         {type === "register" && (
           <Input
