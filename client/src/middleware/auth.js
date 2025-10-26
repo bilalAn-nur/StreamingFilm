@@ -10,7 +10,6 @@ export const requireAuth = async (req) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // Cookie: `accessToken=${accessToken}; refreshToken=${refreshToken};`,
       },
       body: JSON.stringify({
         accessToken,

@@ -1,5 +1,6 @@
+import { requireAdmin } from "./middleware/admin";
 import { requireAuth } from "./middleware/auth";
-import { requireProfile } from "./middleware/profile";
+import { requireUser } from "./middleware/user";
 
 export function middleware(req) {
   const url = req.nextUrl.pathname;
@@ -13,8 +14,12 @@ export function middleware(req) {
     return requireAuth(req);
   }
 
-  if (url.startsWith("/profile") || url.startsWith("/dashboard")) {
-    return requireProfile(req);
+  if (url.startsWith("/profile")) {
+    return requireUser(req);
+  }
+
+  if (url.startsWith("/dashboard")) {
+    return requireAdmin(req);
   }
 }
 
