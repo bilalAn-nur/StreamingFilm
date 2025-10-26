@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import arcjetMiddleware from "./middlewares/arcjet.middleware.js";
 import cors from "cors";
 import tokenRouter from "./routes/token.routes.js";
+import animeRouter from "./routes/anime.routes.js";
 
 const app = express();
 app.set("json spaces", 2);
@@ -26,6 +27,7 @@ app.use(
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/token", tokenRouter);
+app.use("/api/v1/anime", animeRouter);
 
 app.use(errorMiddleware);
 

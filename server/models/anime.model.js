@@ -7,6 +7,11 @@ const animeSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    kitsu_io_id: {
+      type: Number,
+      required: true,
+      unique: true,
+    },
     title: {
       type: String,
       required: [true, "Anime title is required."],
@@ -37,10 +42,6 @@ const animeSchema = new mongoose.Schema(
       min: [0, "Score cannot be below 0."],
       max: [10, "Score cannot exceed 10."],
     },
-    rank: {
-      type: Number,
-      min: [1, "Rank cannot be less than 1."],
-    },
     imageUrl: {
       type: String,
       required: [true, "Image URL is required."],
@@ -53,20 +54,10 @@ const animeSchema = new mongoose.Schema(
       type: String,
       match: [/^https?:\/\/.+/, "Invalid banner URL format."],
     },
-    trailerUrl: {
-      type: String,
-      match: [/^https?:\/\/.+/, "Invalid trailer URL format."],
-    },
     genres: [
       {
         type: String,
         trim: true,
-      },
-    ],
-    episodes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Episode",
       },
     ],
   },
