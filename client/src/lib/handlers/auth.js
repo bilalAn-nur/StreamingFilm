@@ -20,7 +20,12 @@ export async function handleSubmitLogin(formData, type, router) {
     const data = await res.json();
     if (res.ok) {
       localStorage.setItem("accessToken", data.data.accessToken);
-      router.push("/profile");
+      const role = data.data.user.role;
+      if (role === "admin") {
+        router.push("/dashboard");
+      } else {
+        router.push("/profile");
+      }
       return { success: true };
     } else {
       const error = await res.json();
