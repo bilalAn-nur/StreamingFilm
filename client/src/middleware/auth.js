@@ -12,8 +12,15 @@ export const requireAuth = async (req) => {
         Cookie: `accessToken=${accessToken};`,
       },
     });
+    const data = await res.json();
+    console.log("Role dari backend:", data);
+
     if (res.ok) {
-      return NextResponse.redirect(new URL("/profile", req.url));
+      if (data.role === "admin") {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+      } else {
+        return NextResponse.redirect(new URL("/profile", req.url));
+      }
     }
   } catch (err) {
     return NextResponse.next();
