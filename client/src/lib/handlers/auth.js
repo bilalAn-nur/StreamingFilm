@@ -10,9 +10,9 @@ export async function handleSubmitLogin(
   try {
     const res = await fetch(`${BASE_URL}/auth/sign-in`, {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
-      credentials: "include",
     });
 
     const data = await res.json();
@@ -45,7 +45,12 @@ export async function handleSubmitLogin(
   }
 }
 
-export async function handleSubmitRegister(formData, type, router) {
+export async function handleSubmitRegister(
+  formData,
+  type,
+  router,
+  setNotification
+) {
   const result = validateAuthForm(formData, type);
 
   if (!result.success) return { success: false, errors: result.errors };
@@ -53,11 +58,11 @@ export async function handleSubmitRegister(formData, type, router) {
   try {
     const res = await fetch(`${BASE_URL}/auth/sign-up`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
-      credentials: "include",
     });
 
     const data = await res.json();
@@ -66,16 +71,17 @@ export async function handleSubmitRegister(formData, type, router) {
       router.push("/profile");
       return { success: true };
     } else {
-      return {
-        success: false,
-        errors: { form: data.message || "Terjadi kesalahan saat mendaftar." },
-      };
+      if (setNotification)
+        setNotification(data.error || "Terjadi kesalahan", "error");
+      return { success: false, errors: { form: data.error } };
     }
   } catch (err) {
-    return {
-      success: false,
-      errors: { form: "Terjadi kesalahan, coba lagi nanti." },
-    };
+    if (setNotification)
+      setNotification(
+        err.message || "Terjadi kesalahan, coba lagi nanti",
+        "error"
+      );
+    return { success: false, errors: { form: err.message } };
   }
 }
 
@@ -87,9 +93,9 @@ export async function handleSubmitForgot(formData, type, router) {
     // contoh request forgot password
     const res = await fetch(`${BASE_URL}/auth/forgot-password`, {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
-      credentials: "include",
     });
 
     const data = await res.json();

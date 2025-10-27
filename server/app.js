@@ -14,13 +14,15 @@ const app = express();
 app.set("json spaces", 2);
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: false }));
 app.use(arcjetMiddleware);
 app.use(
   cors({
     origin: `http://localhost:${CLIENT_PORT}`,
     credentials: true,
+    // origin: true,
+    exposedHeaders: ["Set-Cookie"],
   })
 );
 

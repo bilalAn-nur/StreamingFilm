@@ -26,40 +26,41 @@ export default function AuthForm({ type }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   let result;
-
-  //   try {
-  //     if (type === "login")
-  //       result = await handleSubmitLogin(formData, type, router);
-  //     else if (type === "register")
-  //       result = await handleSubmitRegister(formData, type, router);
-  //     else result = await handleSubmitForgot(formData, type, router);
-
-  //     if (!result.success) {
-  //       setErrors(result.errors);
-  //       setNotification(result.errors.form || "Terjadi error!");
-  //     } else {
-  //       setNotification("Berhasil!");
-  //     }
-  //   } catch (err) {
-  //     setNotification("Terjadi kesalahan, coba lagi nanti.");
-  //     console.error(err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    let result;
 
-    await handleSubmitLogin(formData, type, router, setNotification);
+    try {
+      if (type === "login")
+        result = await handleSubmitLogin(formData, type, router);
+      else if (type === "register")
+        result = await handleSubmitRegister(formData, type, router);
+      else result = await handleSubmitForgot(formData, type, router);
 
-    setLoading(false);
+      if (!result.success) {
+        setErrors(result.errors);
+        setNotification(result.errors.form || "Terjadi error!");
+      } else {
+        setNotification("Berhasil!");
+      }
+    } catch (err) {
+      setNotification("Terjadi kesalahan, coba lagi nanti.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   await handleSubmitLogin(formData, type, router, setNotification);
+
+  //   setLoading(false);
+  // };
+
   return (
     <div className="w-full max-w-sm bg-gray-800 rounded-2xl p-6 shadow-lg">
       <Notification

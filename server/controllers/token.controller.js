@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import {
   ACCESS_EXPIRES,
   ACCESS_SECRET,
+  NODE_ENV,
   REFRESH_SECRET,
 } from "../config/env.js";
 import refreshTokenModel from "../models/refreshToken.model.js";
@@ -27,8 +28,7 @@ export const refresh = async (req, res, next) => {
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
+      secure: true,
     });
 
     res.json({ accessToken });
@@ -51,39 +51,33 @@ export const verifyToken = async (req, res, next) => {
     try {
       const decoded = jwt.verify(accessToken, ACCESS_SECRET);
 
-      // Ambil role dari database
       const user = await User.findById(decoded.userId).select("role");
       if (!user) return res.status(404).json({ message: "User not found" });
 
-      // Simpan di req.user untuk route lain
       req.user = { id: decoded.userId, role: user.role };
 
-      // Kirim response dengan role
       return res.status(200).json({
         valid: true,
-        role: user.role, // <-- frontend bisa pakai data.role
+        role: user.role,
       });
     } catch (err) {
-      // accessToken tidak valid atau expired, lanjut ke refreshToken
+      //
     }
 
     if (!refreshToken) {
       return res.status(401).json({ message: "No refresh token provided" });
     }
 
-    // Cek apakah refreshToken ada di database
     const tokenDoc = await refreshTokenModel.findOne({ token: refreshToken });
     if (!tokenDoc) {
       return res.status(403).json({ message: "Invalid refresh token" });
     }
 
-    // Cek apakah refreshToken sudah expired
     if (tokenDoc.expiresAt < new Date()) {
       await refreshTokenModel.deleteOne({ token: refreshToken });
       return res.status(403).json({ message: "Refresh token expired" });
     }
 
-    // 3️⃣ Verifikasi refreshToken dan buat accessToken baru
     const decodedRefresh = jwt.verify(refreshToken, REFRESH_SECRET);
     const newAccessToken = jwt.sign(
       { userId: decodedRefresh.userId },
@@ -92,14 +86,15 @@ export const verifyToken = async (req, res, next) => {
     );
 
     res.cookie("accessToken", newAccessToken, {
+      // httpOnly: true,
+      // secure: NODE_ENV === "production",
+      // path: "/",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
+      secure: true,
     });
 
     const user = await User.findById(decodedRefresh.userId).select("role");
     req.user = { id: decodedRefresh.userId, role: user.role };
-    // return res.status(200).json({ valid: true, role: user.role });
 
     return res.status(200).json({
       valid: true,
@@ -108,7 +103,28 @@ export const verifyToken = async (req, res, next) => {
       role: user.role,
     });
   } catch (err) {
-    console.error(err);
+    next(err);
+  }
+};
+
+export const getIdUserByToken = async (req, res, next) => {
+  const { accessToken } = req.body;
+
+  if (!accessToken) {
+    return res.status(401).json({ message: "No tokens provided" });
+  }
+
+  try {
+    const decoded = jwt.decode(accessToken, ACCESS_SECRET);
+    const user = await User.findById(decoded.userId).select(
+      "-_id -password -__v -createdAt -updatedAt"
+    );
+
+    return res.status(200).json({
+      valid: true,
+      user: user,
+    });
+  } catch (err) {
     next(err);
   }
 };

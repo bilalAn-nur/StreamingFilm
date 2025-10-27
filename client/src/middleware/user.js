@@ -12,6 +12,7 @@ export const requireUser = async (req) => {
   try {
     const res = await fetch(`${BASE_URL}/token/verify-token`, {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ accessToken, refreshToken }),
     });

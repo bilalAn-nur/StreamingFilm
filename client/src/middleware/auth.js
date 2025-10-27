@@ -8,6 +8,7 @@ export const requireAuth = async (req) => {
 
     const res = await fetch(`${BASE_URL}/token/verify-token`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },

@@ -7,6 +7,7 @@ import {
   ACCESS_EXPIRES,
   REFRESH_SECRET,
   REFRESH_EXPIRES,
+  NODE_ENV,
 } from "../config/env.js";
 import refreshTokenModel from "../models/refreshToken.model.js";
 
@@ -36,7 +37,6 @@ export const signup = async (req, res, next) => {
           email,
           password: hashedPassword,
           role: "user",
-          profilePicture: "null",
         },
       ]
       // { session }
@@ -60,17 +60,19 @@ export const signup = async (req, res, next) => {
     // await session.commitTransaction();
     // session.endSession();
     res.cookie("refreshToken", refreshToken, {
+      // httpOnly: true,
+      // secure: NODE_ENV === "production",
+      // path: "/",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-
-      path: "/",
+      secure: true,
     });
 
     res.cookie("accessToken", accessToken, {
+      // httpOnly: true,
+      // secure: NODE_ENV === "production",
+      // path: "/",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-
-      path: "/",
+      secure: true,
     });
 
     res.status(201).json({
@@ -83,10 +85,7 @@ export const signup = async (req, res, next) => {
       },
     });
   } catch (error) {
-    // await session.abortTransaction();
-    // session.endSession();
     next(error);
-    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -127,15 +126,19 @@ export const signin = async (req, res, next) => {
     });
 
     res.cookie("refreshToken", refreshToken, {
+      // httpOnly: true,
+      // secure: NODE_ENV === "production",
+      // path: "/",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
+      secure: true,
     });
 
     res.cookie("accessToken", accessToken, {
+      // httpOnly: true,
+      // secure: NODE_ENV === "production",
+      // path: "/",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
+      secure: true,
     });
 
     res.status(200).json({
@@ -170,15 +173,19 @@ export const signout = async (req, res, next) => {
 
     await refreshTokenModel.deleteOne({ token });
     res.clearCookie("refreshToken", {
-      path: "/",
+      // path: "/",
+      // httpOnly: true,
+      // secure: NODE_ENV === "production",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
     });
 
     res.clearCookie("accessToken", {
-      path: "/",
+      // path: "/",
+      // httpOnly: true,
+      // secure: NODE_ENV === "production",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
     });
 
     res.status(200).json({ message: "Logged out successfully" });
