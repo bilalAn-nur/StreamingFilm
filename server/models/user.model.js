@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema(
     profilePicture: {
       type: String,
       trim: true,
-      default: "https://api.dicebear.com/6.x/bottts/svg?seed=default",
+      default: "https://api.dicebear.com/6.x/bottts/png?seed=default",
     },
   },
   { timestamps: true }

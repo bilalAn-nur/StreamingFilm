@@ -7,6 +7,7 @@ import {
   getUser,
   refreshAndStoreAccessToken,
 } from "@/lib/handlers/dashboard.js";
+import Image from "next/image.js";
 
 export default function Header() {
   const [user, setUser] = useState(null);
@@ -20,7 +21,7 @@ export default function Header() {
           console.log("Access token diperbarui.");
         }
         const data = await getUser();
-        setUser(data);
+        setUser(data?.user || null);
       } catch (error) {
         console.error("Error:", error.message);
       }
@@ -46,9 +47,24 @@ export default function Header() {
           <BellIcon />
         </button>
 
-        <div className="w-9 h-9 bg-red-600 rounded-full flex items-center justify-center font-bold">
+        {user?.profilePicture ? (
+          <div className="w-9 h-9 rounded-full overflow-hidden relative">
+            <Image
+              src={user.profilePicture}
+              alt={user.name || "User Avatar"}
+              fill
+              className="object-cover"
+              sizes="36px"
+            />
+          </div>
+        ) : (
+          <div className="w-9 h-9 bg-red-600 rounded-full flex items-center justify-center font-bold text-white">
+            {user?.name ? user.name[0].toUpperCase() : "I"}
+          </div>
+        )}
+        {/* <div className="w-9 h-9 bg-red-600 rounded-full flex items-center justify-center font-bold">
           B
-        </div>
+        </div> */}
       </div>
     </header>
   );
