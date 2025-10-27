@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import {
   ACCESS_EXPIRES,
   ACCESS_SECRET,
-  NODE_ENV,
   REFRESH_SECRET,
 } from "../config/env.js";
 import refreshTokenModel from "../models/refreshToken.model.js";
@@ -101,28 +100,6 @@ export const verifyToken = async (req, res, next) => {
       renewed: true,
       accessToken: newAccessToken,
       role: user.role,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const getIdUserByToken = async (req, res, next) => {
-  const { accessToken } = req.body;
-
-  if (!accessToken) {
-    return res.status(401).json({ message: "No tokens provided" });
-  }
-
-  try {
-    const decoded = jwt.decode(accessToken, ACCESS_SECRET);
-    const user = await User.findById(decoded.userId).select(
-      "-_id -password -__v -createdAt -updatedAt"
-    );
-
-    return res.status(200).json({
-      valid: true,
-      user: user,
     });
   } catch (err) {
     next(err);

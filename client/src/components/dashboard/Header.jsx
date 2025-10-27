@@ -3,29 +3,24 @@
 import { useEffect, useState } from "react";
 import { BellIcon, SearchIcon } from "../icons/icon.jsx";
 import { BASE_URL } from "@/config/index.js";
+import {
+  getUser,
+  refreshAndStoreAccessToken,
+} from "@/lib/handlers/dashboard.js";
 
 export default function Header() {
   const [user, setUser] = useState(null);
   useEffect(() => {
     async function fetchUser() {
       try {
-        const refreshToken = await fetch(`${BASE_URL}/token/refresh`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          // body: JSON.stringify({ accessToken }),
-          credentials: "include",
-        });
-
-        if (!refreshToken.ok) {
-          throw new Error("Gagal mengambil data user");
+        const token = await refreshAndStoreAccessToken(BASE_URL);
+        if (!token) {
+          console.warn("Server tidak mengembalikan accessToken pada response.");
+        } else {
+          console.log("Access token diperbarui.");
         }
-
-        const data = await refreshToken.json();
-        const accessToken = data?.accessToken ?? null;
-
-        if (accessToken) {
-          localStorage.setItem("accessToken", accessToken);
-        }
+        const data = await getUser();
+        setUser(data);
       } catch (error) {
         console.error("Error:", error.message);
       }
