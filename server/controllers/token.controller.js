@@ -9,28 +9,57 @@ import User from "../models/user.model.js";
 
 export const refresh = async (req, res, next) => {
   try {
-    const token = req.cookies.refreshToken;
-    if (!token) return res.status(401).json({ message: "No refresh token" });
+    const refreshToken = req.cookies.refreshToken;
+    const accessToken = req.cookies.accessToken;
 
-    const tokenDoc = await refreshTokenModel.findOne({ token });
+    if (!refreshToken) {
+      return res.status(401).json({ message: "No refresh token" });
+    }
+
+    // ✅ Cek apakah accessToken masih valid
+    if (accessToken) {
+      try {
+        jwt.verify(accessToken, ACCESS_SECRET);
+        // Kalau tidak error berarti masih valid
+        return res.status(200).json({
+          message: "Access token still valid",
+          accessToken,
+        });
+      } catch (err) {
+        // Kalau error karena expired, lanjut refresh
+        if (err.name !== "TokenExpiredError") {
+          // error lain (misal token rusak)
+          return res.status(403).json({ message: "Invalid access token" });
+        }
+        // kalau expired, lanjut ke bawah
+      }
+    }
+
+    // ✅ Verifikasi refresh token
+    const tokenDoc = await refreshTokenModel.findOne({ token: refreshToken });
     if (!tokenDoc)
       return res.status(403).json({ message: "Invalid refresh token" });
     if (tokenDoc.expiresAt < new Date()) {
-      await refreshTokenModel.deleteOne({ token });
+      await refreshTokenModel.deleteOne({ token: refreshToken });
       return res.status(403).json({ message: "Refresh token expired" });
     }
 
-    const decoded = jwt.verify(token, REFRESH_SECRET);
-    const accessToken = jwt.sign({ userId: decoded.userId }, ACCESS_SECRET, {
+    const decoded = jwt.verify(refreshToken, REFRESH_SECRET);
+
+    // ✅ Buat accessToken baru
+    const newAccessToken = jwt.sign({ userId: decoded.userId }, ACCESS_SECRET, {
       expiresIn: ACCESS_EXPIRES,
     });
 
-    res.cookie("accessToken", accessToken, {
+    res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
       secure: true,
     });
 
-    res.json({ accessToken });
+    res.status(200).json({
+      message: "Access token refreshed",
+      accessToken: newAccessToken,
+    });
   } catch (err) {
     next(err);
   }
