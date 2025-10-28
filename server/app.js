@@ -12,19 +12,20 @@ import animeRouter from "./routes/anime.routes.js";
 
 const app = express();
 app.set("json spaces", 2);
+app.use(
+  cors({
+    origin: `http://localhost:${CLIENT_PORT || "3000"}`,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["Set-Cookie"],
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(arcjetMiddleware);
-app.use(
-  cors({
-    origin: `http://localhost:${CLIENT_PORT}`,
-    credentials: true,
-    // origin: true,
-    exposedHeaders: ["Set-Cookie"],
-  })
-);
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);

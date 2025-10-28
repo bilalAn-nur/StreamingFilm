@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import Header from "@/components/dashboard/Header";
 import Sidebar from "@/components/dashboard/Sidebar";
+import Header from "@/components/dashboard/Header";
 
 export default function DashboardLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -12,12 +12,11 @@ export default function DashboardLayout({ children }) {
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       {/* Konten utama */}
-      <div className="flex flex-col md:ml-64 transition-all duration-300">
-        {/* Header */}
+      <div className="flex flex-col transition-all duration-300">
         <Header onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
 
-        {/* Main content */}
-        <main className="p-4 md:p-6">{children}</main>
+        {/* Offset konten di desktop */}
+        <main className="p-4 md:p-6 md:pl-64">{children}</main>
       </div>
     </div>
   );
