@@ -8,7 +8,7 @@ const animeSchema = new mongoose.Schema(
       unique: true,
     },
     kitsu_io_id: {
-      type: Number,
+      type: String,
       required: true,
       unique: true,
     },

@@ -2,13 +2,28 @@
 import Modal from "@/components/dashboard/Modal";
 import MovieForm from "@/components/dashboard/MovieForm";
 import Table from "@/components/dashboard/Table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function MoviePage() {
   const [movies, setMovies] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ title: "", year: "", genre: "" });
+
+  useEffect(() => {
+    async function fetchMovies() {
+      try {
+        const res = await fetch("http://localhost:3001/api/v1/anime"); // ganti dengan endpoint backend-mu
+        if (!res.ok) throw new Error("Failed to fetch movies");
+        const data = await res.json();
+        setMovies(data.data); // data diharapkan array movie
+      } catch (err) {
+        console.error(err);
+      } finally {
+      }
+    }
+    fetchMovies();
+  }, []);
 
   const openAdd = () => {
     setEditing(null);
