@@ -3,11 +3,12 @@ import Image from "next/image";
 
 export default function Hero({ hoveredMovie }) {
   const recomendasiMovie = {
-    src: "https://drive.google.com/uc?export=view&id=10vr5UZFDTLF02bSnztXKd0bd8VdwT3fZ",
+    bannerUrl:
+      "https://drive.google.com/uc?export=view&id=10vr5UZFDTLF02bSnztXKd0bd8VdwT3fZ",
     title: "UMA MUSUME: CINDERELLA GRAY",
     genres: ["Sports", "Slice of Life", "Comedy", "Drama", "Music"],
-    year: 2021,
-    episodes: 24,
+    score: 2021,
+    episodesCount: 24,
     synopsis:
       "Follow the story of aspiring horse girls striving Follow the story of aspiring horse girls strivingFollow the story of aspiring horse girls strivingFollow the story of aspiring horse girls strivingFollow the story of aspiring horse girls strivingFollow the story of aspiring horse girls striving",
   };
@@ -30,7 +31,7 @@ export default function Hero({ hoveredMovie }) {
     <div className="relative w-full md:ml-28 h-[600px] bg-black rounded-lg overflow-hidden">
       {/* Hero Image */}
       <Image
-        src={movie.src}
+        src={movie.bannerUrl}
         alt={movie.title}
         fill
         className={`object-cover transition-opacity duration-700 ease-in-out ${
@@ -64,10 +65,10 @@ export default function Hero({ hoveredMovie }) {
             </span>
           ))}
           <span className="bg-gray-800/70 text-white text-xs md:text-sm font-medium px-3 py-1 rounded-full">
-            {movie.year}
+            {movie.score}
           </span>
           <span className="bg-gray-800/70 text-white text-xs md:text-sm font-medium px-3 py-1 rounded-full">
-            {movie.episodes} Episodes
+            {movie.episodesCount} Episodes
           </span>
         </div>
         <p className="text-gray-200 text-sm md:text-base mb-6 line-clamp-3 drop-shadow-md">

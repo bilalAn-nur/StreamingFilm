@@ -10,10 +10,16 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from "../icons/icon.jsx";
+import { handleSubmitLogout } from "@/lib/handlers/auth.js";
 
-export default function ProfileDropdown({ user, onLogout }) {
+export default function ProfileDropdown({ user }) {
   const [open, setOpen] = useState(false);
   const ref = useRef();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await handleSubmitLogout();
+  };
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -99,7 +105,7 @@ export default function ProfileDropdown({ user, onLogout }) {
         <ul>
           <li
             className="px-4 py-2 flex items-center gap-2 hover:bg-red-700 cursor-pointer text-red-500 transition"
-            onClick={onLogout}
+            onClick={handleSubmit}
           >
             <LogoutIcon className="w-5 h-5 text-red-500" />
             Sign out

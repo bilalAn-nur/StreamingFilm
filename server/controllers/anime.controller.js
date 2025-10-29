@@ -25,7 +25,7 @@ export const createAnime = async (req, res, next) => {
       status,
       score,
       imageUrl,
-      bannerImage,
+      bannerUrl,
       genres,
     } = req.body;
 
@@ -39,7 +39,7 @@ export const createAnime = async (req, res, next) => {
       status,
       score,
       imageUrl,
-      bannerImage,
+      bannerUrl,
       genres,
     });
 
