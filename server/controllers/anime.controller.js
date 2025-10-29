@@ -1,4 +1,5 @@
 import Anime from "../models/anime.model.js";
+import User from "../models/user.model.js";
 
 export const getAnimes = async (req, res, next) => {
   try {
@@ -23,6 +24,7 @@ export const createAnime = async (req, res, next) => {
       type,
       episodesCount,
       status,
+      season,
       score,
       imageUrl,
       bannerUrl,
@@ -37,6 +39,7 @@ export const createAnime = async (req, res, next) => {
       type,
       episodesCount,
       status,
+      season,
       score,
       imageUrl,
       bannerUrl,
@@ -53,10 +56,18 @@ export const createAnime = async (req, res, next) => {
   }
 };
 
-// export const getAnime = async (req, res, next) => {
-//     try {
-//         const anime = await Anime.findOne
-//     } catch (error) {
-//         next(error)
-//     }
-// }
+export const recomendation = async (req, res, next) => {};
+
+export const likeAnime = async (req, res, next) => {
+  try {
+    const { userId, animeId } = req.body;
+
+    const user = await User.findById(userId);
+    const anime = await Anime.findById(animeId);
+
+    if (!user || !anime)
+      return res.status(404).json({ message: "Not Found!!" });
+  } catch (error) {
+    next(error);
+  }
+};

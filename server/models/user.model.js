@@ -35,6 +35,15 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: "https://api.dicebear.com/6.x/bottts/png?seed=default",
     },
+    likeAnime: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Anime",
+      default: [],
+    },
+    favoriteGenre: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );

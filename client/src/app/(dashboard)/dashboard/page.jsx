@@ -26,12 +26,7 @@ export default function Dashboard() {
         <h1 className="text-3xl font-extrabold tracking-wide text-red-500">
           INMA Dashboard
         </h1>
-        <button className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition">
-          {/* <Upload className="w-5 h-5" /> */}
-          Upload Movie
-        </button>
       </header>
-
       {/* Statistic Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         <StatCard label="Total Films" value={movies.length} />

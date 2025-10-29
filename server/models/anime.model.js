@@ -42,6 +42,9 @@ const animeSchema = new mongoose.Schema(
       min: [0, "Score cannot be below 0."],
       max: [10, "Score cannot exceed 10."],
     },
+    season: {
+      type: String,
+    },
     imageUrl: {
       type: String,
       required: [true, "Image URL is required."],

@@ -16,10 +16,10 @@ export default function Sidebar({ isOpen, onClose }) {
 
   const links = [
     { name: "Dashboard", href: "/dashboard", icon: <DashboardIcon /> },
-    { name: "Movies", href: "/dashboard/movies", icon: <MovieIcon /> },
-    { name: "Upload", href: "/dashboard/upload", icon: <UploadIcon /> },
-    { name: "Users", href: "/dashboard/users", icon: <UserIcon /> },
-    { name: "Settings", href: "/dashboard/settings", icon: <SettingsIcon /> },
+    { name: "Movies", href: "/movie", icon: <MovieIcon /> },
+    { name: "Upload", href: "/upload", icon: <UploadIcon /> },
+    { name: "Users", href: "/users", icon: <UserIcon /> },
+    { name: "Settings", href: "/settings", icon: <SettingsIcon /> },
   ];
 
   const handleSubmit = async (e) => {
