@@ -57,7 +57,10 @@ export default function ProfileDropdown({ user }) {
 
         {/* Teks & ikon panah */}
         <div className="flex items-center gap-1">
-          <span>Hello, {user?.name?.split(" ")[0] || "User"}</span>
+          {/* sembunyikan teks di mobile */}
+          <span className="hidden md:inline">
+            Hello, {user?.name?.split(" ")[0] || "User"}
+          </span>
           {open ? (
             <ChevronUpIcon className="w-4 h-4 transition-transform duration-200" />
           ) : (
