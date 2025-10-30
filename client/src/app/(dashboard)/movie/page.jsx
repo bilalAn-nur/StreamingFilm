@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import Modal from "@/components/dashboard/Modal";
 import MovieForm from "@/components/dashboard/MovieForm";
 import Table from "@/components/dashboard/Table";
+import Input from "@/components/auth/Input";
 
 export default function MoviePage() {
   const [movies, setMovies] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [query, setQuery] = useState("");
   const [form, setForm] = useState({
     title: "",
     genres: [],
@@ -23,6 +25,10 @@ export default function MoviePage() {
     mal_id: null,
     kitsu_io_id: null,
   });
+
+  const filteredMovies = movies.filter((m) =>
+    m.title.toLowerCase().includes(query.toLowerCase())
+  );
 
   // Fetch movies dari backend
   useEffect(() => {
@@ -84,7 +90,21 @@ export default function MoviePage() {
 
       {/* Table */}
       <div className="bg-gray-800/60 rounded-xl p-6 backdrop-blur-sm shadow-lg overflow-x-auto">
-        <div className="flex justify-end mb-4">
+        {/* Table Header: search + add button */}
+        <div className="flex justify-between items-center mb-4 gap-3">
+          {/* Search Input di kiri */}
+          <div className="flex-1 max-w-xs">
+            <Input
+              label="Search"
+              name="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search movie..."
+              className="w-full"
+            />
+          </div>
+
+          {/* Tombol Add Movie di kanan */}
           <button
             onClick={openAdd}
             className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-semibold transition cursor-pointer"
@@ -92,7 +112,12 @@ export default function MoviePage() {
             Add Movie
           </button>
         </div>
-        <Table movies={movies} onEdit={openEdit} onDelete={handleDelete} />
+
+        <Table
+          movies={filteredMovies}
+          onEdit={openEdit}
+          onDelete={handleDelete}
+        />
       </div>
 
       {/* Modal */}
