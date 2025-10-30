@@ -12,14 +12,10 @@ export default function MoviesGrid({ setHoveredMovie }) {
         if (!res.ok) throw new Error("Failed to fetch data");
         const data = await res.json();
 
-        console.log(data.data);
-
         // Pastikan struktur datanya sesuai dengan field yang digunakan
         setMovies(data.data);
       } catch (err) {
         console.error("Error fetching movies:", err);
-      } finally {
-        setLoading(false);
       }
     };
 

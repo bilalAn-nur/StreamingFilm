@@ -1,8 +1,21 @@
 // lib/handlers/movie.js
+const token =
+  typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+
 export const fetchMergedAnime = async (query) => {
   try {
     const res = await fetch(
-      `http://localhost:3001/api/v1/anime/merged?q=${encodeURIComponent(query)}`
+      `http://localhost:3001/api/v1/anime/merged?q=${encodeURIComponent(
+        query
+      )}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: "include",
+      }
     );
     if (!res.ok) throw new Error("Failed to fetch merged anime");
     const data = await res.json();
@@ -15,11 +28,13 @@ export const fetchMergedAnime = async (query) => {
 
 export const handleSubmitAnime = async (e, form, close, movies, setMovies) => {
   e.preventDefault();
-
   try {
     const res = await fetch("http://localhost:3001/api/v1/anime", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       credentials: "include",
       body: JSON.stringify(form),
     });
