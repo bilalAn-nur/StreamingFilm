@@ -91,9 +91,9 @@ export default function MoviePage() {
       {/* Table */}
       <div className="bg-gray-800/60 rounded-xl p-6 backdrop-blur-sm shadow-lg overflow-x-auto">
         {/* Table Header: search + add button */}
-        <div className="flex justify-between items-center mb-4 gap-3">
-          {/* Search Input di kiri */}
-          <div className="flex-1 max-w-xs">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+          {/* Search Input */}
+          <div className="flex-1 max-w-xs w-full order-2 md:order-1">
             <Input
               label="Search"
               name="search"
@@ -104,10 +104,10 @@ export default function MoviePage() {
             />
           </div>
 
-          {/* Tombol Add Movie di kanan */}
+          {/* Tombol Add Movie */}
           <button
             onClick={openAdd}
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-semibold transition cursor-pointer"
+            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-semibold transition cursor-pointer order-1 md:order-2"
           >
             Add Movie
           </button>
