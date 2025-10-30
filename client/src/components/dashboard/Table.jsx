@@ -59,8 +59,9 @@ export default function Table({ movies, onEdit, onDelete }) {
               <td className="px-4 py-3">{movie.type}</td>
               <td className="px-4 py-3">{movie.status}</td>
               <td className="px-4 py-3 w-28">{movie.score}</td>
-              <td className="px-4 py-3 w-40">{movie.genres.join(", ")}</td>
-
+              <td className="px-4 py-3 w-40">
+                {(movie.genres || []).join(", ")}
+              </td>
               <td className="px-4 py-3 w-44">
                 <div className="flex gap-2">
                   <button

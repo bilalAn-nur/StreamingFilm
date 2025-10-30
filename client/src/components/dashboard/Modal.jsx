@@ -23,13 +23,13 @@ export default function Modal({ isOpen, onClose, children }) {
       {/* Overlay */}
       <div
         onClick={handleClose}
-        className={`absolute inset-0 bg-black/40 transition-opacity ${
+        className={`absolute inset-0 bg-black/40 transition-opacity  ${
           show ? "opacity-100" : "opacity-0"
         }`}
       />
       {/* Modal content */}
       <div
-        className={`relative bg-gray-800 rounded-xl shadow-lg w-full max-w-md mx-4 p-4 transition-all transform ${
+        className={`relative bg-gray-800 rounded-xl shadow-lg w-full max-w-md mx-4 p-4 transition-all transform  ${
           show ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >

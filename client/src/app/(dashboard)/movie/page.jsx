@@ -88,7 +88,7 @@ export default function MoviePage() {
               </h2>
               <button
                 onClick={close}
-                className="text-gray-300 hover:text-white transition"
+                className="text-gray-300 hover:text-white transition cursor-pointer"
               >
                 ✕
               </button>

@@ -18,7 +18,7 @@ export default function MovieForm({
   );
   const [existingMovies, setExistingMovies] = useState([]);
 
-  // Fetch existing anime from backend
+  // Ambil data anime dari backend
   useEffect(() => {
     fetch("http://localhost:3001/api/v1/anime")
       .then((res) => res.json())
@@ -30,70 +30,25 @@ export default function MovieForm({
       .catch(() => setExistingMovies([]));
   }, []);
 
-  // Search anime when query changes
+  // Search Jikan saat query berubah
   useEffect(() => {
     if (!query.trim() || selectedAnime) return setResults([]);
-    const timer = setTimeout(() => searchAnime(query), 400);
+    const timer = setTimeout(() => searchJikan(query), 400);
     return () => clearTimeout(timer);
-  }, [query, selectedAnime, existingMovies]);
+  }, [query, selectedAnime]);
 
-  async function searchAnime(q) {
+  // 1️⃣ Cari anime dari Jikan
+  async function searchJikan(q) {
     setLoading(true);
     try {
-      const resultsSet = [];
-
-      // Kitsu API
-      const kitsuRes = await fetch(
-        `https://kitsu.io/api/edge/anime?filter[text]=${q}&page[limit]=5`
-      ).then((r) => r.json());
-
-      kitsuRes.data.forEach((item) => {
-        resultsSet.push({
-          id: item.id,
-          source: "kitsu",
-          title: item.attributes.canonicalTitle,
-          episodesCount: item.attributes.episodeCount,
-          imageUrl: item.attributes.posterImage?.small,
-          bannerUrl: item.attributes.coverImage?.original,
-          genres: item.attributes.slug ? [item.attributes.slug] : [],
-        });
-      });
-
-      // Jikan API
       const jikanRes = await fetch(
-        `https://api.jikan.moe/v4/anime?q=${q}&limit=5`
+        `https://api.jikan.moe/v4/anime?q=${q}&limit=10`
       ).then((r) => r.json());
 
-      jikanRes.data.forEach((item) => {
-        // cari data dari Kitsu yang sama berdasarkan judul
-        const matchingKitsu = resultsSet.find((k) => k.title === item.title);
-
-        resultsSet.push({
-          id: item.mal_id,
-          source: "jikan",
-          title: item.title,
-          mal_id: item.mal_id,
-          kitsu_io_id: matchingKitsu ? matchingKitsu.id : null,
-          synopsis: item.synopsis,
-          type: item.type,
-          status: item.status,
-          season: item.season ? `${item.season} ${item.year || ""}` : "",
-          score: item.score,
-          genres: item.genres?.map((g) => g.name) || [],
-          episodesCount: matchingKitsu?.episodesCount || item.episodes,
-          imageUrl: matchingKitsu?.imageUrl || item.images?.jpg.image_url,
-          bannerUrl: matchingKitsu?.bannerUrl || item.images?.jpg.image_url,
-        });
-      });
-
-      // Filter anime yang sudah ada di MongoDB
-      const filtered = resultsSet.filter(
+      // Filter anime yang sudah ada
+      const filtered = jikanRes.data.filter(
         (anime) =>
-          !existingMovies.some(
-            (m) =>
-              (anime.source === "kitsu" && m.kitsu_io_id === anime.id) ||
-              (anime.source === "jikan" && m.mal_id === anime.id)
-          )
+          !existingMovies.some((m) => anime.mal_id && m.mal_id === anime.mal_id)
       );
 
       setResults(filtered);
@@ -105,25 +60,96 @@ export default function MovieForm({
     }
   }
 
-  const handleSelect = (anime) => {
-    setForm({
-      title: anime.title,
-      genre: anime.genres.join(", "),
-      year: anime.season,
-      episodesCount: anime.episodesCount,
-      imageUrl: anime.imageUrl,
-      bannerUrl: anime.bannerUrl,
-      synopsis: anime.synopsis,
-      type: anime.type,
-      status: anime.status,
-      score: anime.score,
-      mal_id: anime.source === "jikan" ? anime.mal_id : null,
-      kitsu_io_id:
-        anime.source === "kitsu" ? anime.kitsu_io_id || anime.id : null,
-    });
-    setSelectedAnime(anime);
-    setQuery(anime.title);
-    setShowDropdown(false);
+  // 2️⃣ Ambil data Kitsu saat anime dipilih
+  async function fetchMatchingKitsu(jikanItem) {
+    try {
+      const kitsuRes = await fetch(
+        `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(
+          jikanItem.title
+        )}&page[limit]=10`
+      ).then((r) => r.json());
+      console.log(kitsuRes);
+
+      const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]+/g, "");
+
+      const jikanTitles = [
+        jikanItem.titles?.Default,
+        jikanItem.titles?.English,
+        jikanItem.titles?.Japanese,
+      ]
+        .filter(Boolean)
+        .map(normalize);
+
+      const matchingKitsu = kitsuRes.data.find((k) => {
+        const kitsuTitles = [
+          k.attributes.canonicalTitle,
+          k.attributes.titles.en,
+          k.attributes.titles.en_jp,
+          k.attributes.titles.ja_jp,
+        ]
+          .filter(Boolean)
+          .map(normalize);
+
+        return jikanTitles.some((jt) => kitsuTitles.includes(jt));
+      });
+
+      console.log(matchingKitsu);
+      return matchingKitsu || null;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  }
+
+  // 3️⃣ Gabungkan data saat anime dipilih
+  const handleSelect = async (jikanItem) => {
+    setLoading(true);
+    try {
+      const kitsuRes = await fetch(
+        `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(
+          jikanItem.title
+        )}&page[limit]=1`
+      ).then((r) => r.json());
+
+      const kitsu = kitsuRes.data[0];
+
+      const mergedAnime = {
+        title: jikanItem.titles?.Default || jikanItem.title,
+        genres: jikanItem.genres?.map((g) => g.name) || [],
+        year: jikanItem.season
+          ? `${jikanItem.season} ${jikanItem.year || ""}`
+          : "",
+        episodesCount:
+          kitsu?.attributes.episodeCount || jikanItem.episodes || 0,
+        imageUrl:
+          kitsu?.attributes.posterImage?.small ||
+          jikanItem.images?.jpg?.image_url ||
+          "",
+        bannerUrl:
+          kitsu?.attributes.coverImage?.original ||
+          jikanItem.images?.jpg?.large_image_url ||
+          "",
+        synopsis:
+          kitsu?.attributes.synopsis ||
+          kitsu?.attributes.description ||
+          jikanItem.synopsis ||
+          "",
+        type: jikanItem.type || kitsu?.attributes.showType || "",
+        status: jikanItem.status || kitsu?.attributes.status || "",
+        score: jikanItem.score || kitsu?.attributes.averageRating || null,
+        mal_id: jikanItem.mal_id,
+        kitsu_io_id: kitsu?.id || null,
+      };
+
+      setForm(mergedAnime);
+      setSelectedAnime(mergedAnime);
+      setQuery(mergedAnime.title);
+      setShowDropdown(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -150,8 +176,15 @@ export default function MovieForm({
   };
 
   return (
-    <form onSubmit={onSubmit} className="p-4 space-y-4">
-      {/* Title input with autocomplete */}
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        console.log("Data yang dikirim:", form);
+        if (onSubmit) onSubmit(e);
+      }}
+      className="p-4 space-y-4"
+    >
+      {/* Input */}
       <div className="relative">
         <label className="block text-sm font-medium mb-1 text-white">
           Title
@@ -168,17 +201,21 @@ export default function MovieForm({
           }`}
         />
 
+        {loading && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        )}
+
         {showDropdown && results.length > 0 && !selectedAnime && (
           <ul className="absolute z-50 mt-1 w-full bg-gray-800 border border-gray-600 rounded-lg max-h-60 overflow-auto shadow-lg">
             {results.map((anime) => (
               <li
-                key={`${anime.source}-${anime.id}`}
+                key={anime.mal_id}
                 onClick={() => handleSelect(anime)}
                 className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 cursor-pointer transition"
               >
-                {anime.imageUrl && (
+                {anime.images?.jpg?.image_url && (
                   <img
-                    src={anime.imageUrl}
+                    src={anime.images.jpg.image_url}
                     alt={anime.title}
                     className="w-10 h-14 object-cover rounded"
                   />
@@ -186,18 +223,16 @@ export default function MovieForm({
                 <div className="flex-1">
                   <p className="text-sm font-medium">{anime.title}</p>
                   <p className="text-xs text-gray-400">
-                    {anime.genres.join(", ")}
+                    {anime.genres?.map((g) => g.name).join(", ")}
                   </p>
                 </div>
               </li>
             ))}
           </ul>
         )}
-
-        {loading && <p className="text-xs text-gray-400 mt-1">Loading...</p>}
       </div>
 
-      {/* Preview selected anime */}
+      {/* Preview */}
       {selectedAnime && (
         <div className="mt-3 p-3 bg-gray-700 rounded-lg flex gap-3 items-start">
           {selectedAnime.imageUrl && (
@@ -216,7 +251,7 @@ export default function MovieForm({
             )}
             {selectedAnime.genres && (
               <p className="text-sm text-gray-300">
-                Genres: {selectedAnime.genres.join(", ")}
+                Genres: {selectedAnime.genres}
               </p>
             )}
             {selectedAnime.year && (
@@ -229,24 +264,6 @@ export default function MovieForm({
                 Episodes: {selectedAnime.episodesCount}
               </p>
             )}
-            {selectedAnime.score && (
-              <p className="text-sm text-gray-300">
-                Score: {selectedAnime.score}
-              </p>
-            )}
-            {selectedAnime.type && (
-              <p className="text-sm text-gray-300">
-                Type: {selectedAnime.type}
-              </p>
-            )}
-            {selectedAnime.status && (
-              <p className="text-sm text-gray-300">
-                Status: {selectedAnime.status}
-              </p>
-            )}
-            <p className="text-xs text-gray-400">
-              Source: {selectedAnime.source}
-            </p>
             <button
               type="button"
               onClick={handleReset}
