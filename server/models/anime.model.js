@@ -4,13 +4,11 @@ const animeSchema = new mongoose.Schema(
   {
     mal_id: {
       type: Number,
-      required: true,
-      unique: true,
     },
     kitsu_io_id: {
       type: String,
-      required: true,
       unique: true,
+      sparse: true,
     },
     title: {
       type: String,

@@ -97,8 +97,10 @@ export default function MoviePage() {
               editing={editing}
               form={form}
               setForm={setForm}
-              onSubmit={handleSubmit}
-              onCancel={close}
+              close={close}
+              movies={movies}
+              setMovies={setMovies}
+              s
             />
           </>
         )}

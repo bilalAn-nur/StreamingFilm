@@ -50,9 +50,9 @@ export default function Table({ movies, onEdit, onDelete }) {
               </td>
             </tr>
           )}
-          {movies.map((movie) => (
+          {movies.map((movie, idx) => (
             <tr
-              key={movie._id}
+              key={movie._id || movie.mal_id || movie.kitsu_io_id || idx}
               className="border-t border-gray-200 dark:border-gray-700"
             >
               <td className="px-4 py-3">{movie.title}</td>
@@ -129,7 +129,7 @@ export default function Table({ movies, onEdit, onDelete }) {
           <button
             onClick={handleNext}
             disabled={currentPage === totalPages}
-            className={`px-2 py-1 rounded ${
+            className={`px-2 py-1 rounded  ${
               currentPage === totalPages
                 ? "bg-gray-700/50 cursor-not-allowed"
                 : "bg-gray-700 hover:bg-gray-600"

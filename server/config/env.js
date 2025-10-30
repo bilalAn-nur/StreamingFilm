@@ -13,4 +13,6 @@ export const {
   REFRESH_EXPIRES,
   ARCJET_API_KEY,
   ARCJET_ENV,
+  JIKAN_URL,
+  KITSU_URL,
 } = process.env;
