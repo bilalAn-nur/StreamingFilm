@@ -7,7 +7,6 @@ export default function MovieForm({
   editing,
   form,
   setForm,
-  onSubmit,
   onCancel,
   close,
   movies,
@@ -21,14 +20,15 @@ export default function MovieForm({
     form.title ? { ...form } : null
   );
 
+  // Fetch anime dari API
   useEffect(() => {
     if (!query.trim() || selectedAnime) return setResults([]);
     const timer = setTimeout(async () => {
-      setLoading(true); // ⬅️ pastikan loading di-set di sini
+      setLoading(true);
       const data = await fetchMergedAnime(query);
       setResults(data);
       setShowDropdown(true);
-      setLoading(false); // ⬅️ selesai fetch, matikan loading
+      setLoading(false);
     }, 400);
     return () => clearTimeout(timer);
   }, [query, selectedAnime]);
@@ -65,14 +65,10 @@ export default function MovieForm({
 
   return (
     <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        console.log("Data yang dikirim:", form);
-        handleSubmitAnime(e, form, close, movies, setMovies);
-      }}
+      onSubmit={(e) => handleSubmitAnime(e, form, close, movies, setMovies)}
       className="p-4 space-y-6 bg-gray-800 rounded-xl shadow-lg"
     >
-      {/* Input */}
+      {/* Input Title */}
       <div className="relative">
         <label className="block text-sm font-semibold mb-2 text-gray-200">
           Title
@@ -87,7 +83,6 @@ export default function MovieForm({
             disabled={!!selectedAnime}
             className="w-full rounded-lg p-2.5 pr-10 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
-
           {loading && (
             <div className="absolute right-3 top-0 bottom-0 flex items-center">
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -101,7 +96,7 @@ export default function MovieForm({
               <ul className="absolute z-50 mt-2 w-full bg-gray-900 border border-gray-700 rounded-xl max-h-64 overflow-auto shadow-2xl animate-fadeIn">
                 {results.map((anime) => (
                   <li
-                    key={anime.mal_id || anime.kitsu_io_id}
+                    key={anime.mal_id || anime.kitsu_io_id || anime.title}
                     onClick={() => handleSelect(anime)}
                     className="flex items-center gap-3 px-4 py-2 hover:bg-indigo-600 hover:text-white cursor-pointer transition-all duration-200 rounded-lg"
                   >

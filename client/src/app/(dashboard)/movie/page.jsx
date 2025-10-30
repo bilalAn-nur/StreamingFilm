@@ -1,25 +1,39 @@
 "use client";
+
+import { useState, useEffect } from "react";
 import Modal from "@/components/dashboard/Modal";
 import MovieForm from "@/components/dashboard/MovieForm";
 import Table from "@/components/dashboard/Table";
-import { useEffect, useState } from "react";
 
 export default function MoviePage() {
   const [movies, setMovies] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ title: "", year: "", genre: "" });
+  const [form, setForm] = useState({
+    title: "",
+    genres: [],
+    year: "",
+    episodesCount: "",
+    imageUrl: "",
+    bannerUrl: "",
+    synopsis: "",
+    type: "",
+    status: "",
+    score: "",
+    mal_id: null,
+    kitsu_io_id: null,
+  });
 
+  // Fetch movies dari backend
   useEffect(() => {
     async function fetchMovies() {
       try {
-        const res = await fetch("http://localhost:3001/api/v1/anime"); // ganti dengan endpoint backend-mu
+        const res = await fetch("http://localhost:3001/api/v1/anime");
         if (!res.ok) throw new Error("Failed to fetch movies");
         const data = await res.json();
-        setMovies(data.data); // data diharapkan array movie
+        setMovies(data.data); // pastikan backend return array movie
       } catch (err) {
         console.error(err);
-      } finally {
       }
     }
     fetchMovies();
@@ -27,34 +41,36 @@ export default function MoviePage() {
 
   const openAdd = () => {
     setEditing(null);
-    setForm({ title: "", year: "", genre: "" });
+    setForm({
+      title: "",
+      genres: [],
+      year: "",
+      episodesCount: "",
+      imageUrl: "",
+      bannerUrl: "",
+      synopsis: "",
+      type: "",
+      status: "",
+      score: "",
+      mal_id: null,
+      kitsu_io_id: null,
+    });
     setIsOpen(true);
   };
 
   const openEdit = (movie) => {
     setEditing(movie);
-    setForm({ title: movie.title, year: movie.year, genre: movie.genre });
+    setForm({ ...movie });
     setIsOpen(true);
   };
 
   const closeModal = () => setIsOpen(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!form.title.trim()) return;
-    if (editing) {
-      setMovies((m) =>
-        m.map((it) => (it.id === editing.id ? { ...it, ...form } : it))
-      );
-    } else {
-      setMovies((m) => [...m, { id: Date.now(), ...form }]);
-    }
-    closeModal();
-  };
-
-  const handleDelete = (id) => {
+  const handleDelete = (movieId) => {
     if (!confirm("Hapus movie ini?")) return;
-    setMovies((m) => m.filter((it) => it.id !== id));
+    setMovies((prev) =>
+      prev.filter((m) => m.id === movieId || m._id === movieId)
+    );
   };
 
   return (
@@ -65,6 +81,7 @@ export default function MoviePage() {
           INMA Movie
         </h1>
       </header>
+
       {/* Table */}
       <div className="bg-gray-800/60 rounded-xl p-6 backdrop-blur-sm shadow-lg overflow-x-auto">
         <div className="flex justify-end mb-4">
@@ -93,14 +110,15 @@ export default function MoviePage() {
                 ✕
               </button>
             </div>
+
             <MovieForm
               editing={editing}
               form={form}
               setForm={setForm}
               close={close}
+              onCancel={closeModal}
               movies={movies}
               setMovies={setMovies}
-              s
             />
           </>
         )}

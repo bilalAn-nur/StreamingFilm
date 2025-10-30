@@ -12,28 +12,28 @@ export const fetchMergedAnime = async (query) => {
     return [];
   }
 };
+
 export const handleSubmitAnime = async (e, form, close, movies, setMovies) => {
   e.preventDefault();
-
-  console.log("Mengirim form:", form);
 
   try {
     const res = await fetch("http://localhost:3001/api/v1/anime", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify(form),
     });
 
-    const text = await res.text(); // ambil mentah dulu supaya kalau JSON error tetap kelihatan
-    console.log("Response raw:", text);
+    const text = await res.text();
+    const data = JSON.parse(text);
 
     if (!res.ok) throw new Error(`Gagal submit: ${res.status} ${text}`);
 
-    const data = JSON.parse(text);
-    console.log("Data berhasil dikirim:", data);
+    // Pastikan data baru berbentuk object
+    const newMovie = Array.isArray(data.data) ? data.data[0] : data.data;
 
-    // Update tabel langsung
-    setMovies((prev) => [...prev, data.data]);
+    // Update state
+    setMovies((prev) => [newMovie, ...prev]);
 
     // Tutup modal
     close();

@@ -4,6 +4,7 @@ const animeSchema = new mongoose.Schema(
   {
     mal_id: {
       type: Number,
+      unique: true,
     },
     kitsu_io_id: {
       type: String,
@@ -23,12 +24,10 @@ const animeSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["TV", "OVA", "ONA", "Movie", "Special", "Music"],
       required: [true, "Anime type is required."],
     },
     episodesCount: {
       type: Number,
-      min: [1, "Episodes count must be at least 1."],
     },
     status: {
       type: String,
@@ -61,6 +60,10 @@ const animeSchema = new mongoose.Schema(
         trim: true,
       },
     ],
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   { timestamps: true }
 );

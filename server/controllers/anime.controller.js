@@ -1,10 +1,11 @@
-import { JIKAN_URL, KITSU_URL } from "../config/env.js";
+import { ACCESS_SECRET, JIKAN_URL, KITSU_URL } from "../config/env.js";
 import Anime from "../models/anime.model.js";
 import User from "../models/user.model.js";
+import jwt from "jsonwebtoken";
 
 export const getAnimes = async (req, res, next) => {
   try {
-    const animes = await Anime.find();
+    const animes = await Anime.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       message: "Animes retrieved successfully",
@@ -32,6 +33,13 @@ export const createAnime = async (req, res, next) => {
       genres,
     } = req.body;
 
+    const token = req.cookies.accessToken;
+    if (!token) return res.status(401).json({ message: "Token missing" });
+
+    // Decode token untuk ambil userId
+    const decoded = jwt.verify(token, ACCESS_SECRET);
+    const userId = decoded.userId;
+
     const newAnime = await Anime.create(
       [
         {
@@ -47,6 +55,7 @@ export const createAnime = async (req, res, next) => {
           imageUrl,
           bannerUrl,
           genres,
+          createdBy: userId,
         },
       ]
       // { session }
@@ -62,7 +71,7 @@ export const createAnime = async (req, res, next) => {
   }
 };
 
-export const recomendation = async (req, res, next) => {};
+// export const recomendation = async (req, res, next) => {};
 
 export const likeAnime = async (req, res, next) => {
   try {
