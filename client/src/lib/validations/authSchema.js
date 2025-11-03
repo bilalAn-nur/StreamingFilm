@@ -1,21 +1,15 @@
 import { z } from "zod";
 
 // Schema untuk login
-export const loginFormSchema = z.object({
+export const signinFormSchema = z.object({
   email: z
     .string()
     .min(1, { message: "Email is required" })
     .email({ message: "Invalid email format" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters long" })
-    .max(100, { message: "Password must be at most 100 characters long" })
-    .regex(/(?=.*[A-Za-z])(?=.*\d)/, {
-      message: "Password must contain at least one letter and one number",
-    }),
+  password: z.string().min(1, { message: "Password is required" }),
 });
 
-export const registerFormShcema = z
+export const signupFormShcema = z
   .object({
     name: z.string().min(3, { message: "Name is required" }),
     email: z
@@ -54,12 +48,12 @@ export const forgotPasswordSchema = z.object({
 export function validateAuthForm(data, type) {
   let schema;
 
-  if (type === "forgot") {
+  if (type === "forgotPassword") {
     schema = forgotPasswordSchema;
-  } else if (type === "login") {
-    schema = loginFormSchema;
+  } else if (type === "signin") {
+    schema = signinFormSchema;
   } else {
-    schema = registerFormShcema;
+    schema = signupFormShcema;
   }
 
   const result = schema.safeParse(data);

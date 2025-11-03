@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/config";
+import CONFIG from "@/config";
 import { NextResponse } from "next/server";
 
 export const requireUser = async (req) => {
@@ -10,7 +10,7 @@ export const requireUser = async (req) => {
   }
 
   try {
-    const res = await fetch(`${BASE_URL}/token/verify-token`, {
+    const res = await fetch(`${CONFIG.BASE_URL}/token/verify-token`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },

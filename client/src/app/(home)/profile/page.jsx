@@ -1,23 +1,9 @@
-"use client";
-import { BASE_URL } from "@/config";
-import { handleSubmitLogout } from "@/lib/handlers/auth";
-import React from "react";
+import React from 'react'
 
-const ProfilePage = () => {
-  const handleLogout = async (e) => {
-    e.preventDefault();
-    handleSubmitLogout();
-  };
+const page = () => {
   return (
-    <div>
-      <button
-        onClick={handleLogout}
-        className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
-      >
-        Logout
-      </button>
-    </div>
-  );
-};
+    <div>page</div>
+  )
+}
 
-export default ProfilePage;
+export default page

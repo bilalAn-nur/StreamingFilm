@@ -1,29 +1,27 @@
 "use client";
-import { useEffect } from "react";
 
-export default function Notification({ message, type = "error", onClose }) {
-  useEffect(() => {
-    if (!message) return;
-    const timer = setTimeout(() => {
-      onClose();
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [message, onClose]);
+export default function Notification({ notification, onClose }) {
+  if (!notification) return null;
 
-  if (!message) return null;
-
-  const bgColor =
-    type === "error"
-      ? "bg-red-500"
-      : type === "success"
-      ? "bg-green-500"
-      : "bg-gray-500";
+  const { message, type } = notification;
 
   return (
     <div
-      className={`fixed top-5 right-5 px-4 py-3 rounded-md text-white shadow-lg ${bgColor} animate-slide-in`}
+      className={`fixed top-5 right-5 px-4 py-3 rounded-md text-white shadow-lg ${
+        type === "success"
+          ? "bg-green-500"
+          : type === "error"
+          ? "bg-red-500"
+          : "bg-gray-500"
+      } animate-slide-in`}
     >
       {message}
+      <button
+        onClick={onClose}
+        className="ml-3 font-bold hover:opacity-80 transition"
+      >
+        ×
+      </button>
     </div>
   );
 }

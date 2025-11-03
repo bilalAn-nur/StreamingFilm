@@ -1,4 +1,4 @@
-import AuthForm from "@/components/auth/AuthForm";
+import AuthForm from "@/components/auth/pages/AuthForm";
 
 export async function generateMetadata({ params, searchParams }) {
   return {
@@ -7,6 +7,6 @@ export async function generateMetadata({ params, searchParams }) {
   };
 }
 
-export default function LoginPage() {
-  return <AuthForm type="login" />;
+export default function SignInPage() {
+  return <AuthForm type="signin" />;
 }

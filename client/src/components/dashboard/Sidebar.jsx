@@ -1,32 +1,13 @@
-"use client";
-import { handleSubmitLogout } from "@/lib/handlers/auth";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  DashboardIcon,
-  LogoutIcon,
-  MovieIcon,
-  SettingsIcon,
-  UploadIcon,
-  UserIcon,
-} from "../icons/icon.jsx";
+import { LogoutIcon } from "../icons";
 
-export default function Sidebar({ isOpen, onClose }) {
-  const pathname = usePathname();
-
-  const links = [
-    { name: "Dashboard", href: "/dashboard", icon: <DashboardIcon /> },
-    { name: "Movies", href: "/movie", icon: <MovieIcon /> },
-    { name: "Upload", href: "/upload", icon: <UploadIcon /> },
-    { name: "Users", href: "/users", icon: <UserIcon /> },
-    { name: "Settings", href: "/settings", icon: <SettingsIcon /> },
-  ];
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await handleSubmitLogout();
-  };
-
+export default function Sidebar({
+  isOpen,
+  onClose,
+  onLogout,
+  links,
+  pathname,
+}) {
   return (
     <>
       <aside
@@ -59,7 +40,7 @@ export default function Sidebar({ isOpen, onClose }) {
         <div className="mt-auto pt-4 border-t border-gray-800">
           <button
             className="flex items-center gap-3 text-gray-400 hover:text-red-500 transition"
-            onClick={handleSubmit}
+            onClick={onLogout}
           >
             <LogoutIcon />
             Logout
@@ -67,7 +48,6 @@ export default function Sidebar({ isOpen, onClose }) {
         </div>
       </aside>
 
-      {/* Overlay (mobile only) */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-30 md:hidden"

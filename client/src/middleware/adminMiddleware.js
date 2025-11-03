@@ -1,4 +1,5 @@
-import { BASE_URL } from "@/config";
+import CONFIG from "@/config";
+import api from "@/utils/axios";
 import { NextResponse } from "next/server";
 
 export const requireAdmin = async (req) => {
@@ -10,7 +11,7 @@ export const requireAdmin = async (req) => {
   }
 
   try {
-    const res = await fetch(`${BASE_URL}/token/verify-token`, {
+    const res = await fetch(`${CONFIG.BASE_URL}/token/verify-token`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },

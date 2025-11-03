@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/config";
+import CONFIG from "@/config";
 import { NextResponse } from "next/server";
 
 export const requireAuth = async (req) => {
@@ -6,7 +6,7 @@ export const requireAuth = async (req) => {
     const accessToken = req.cookies.get("accessToken")?.value;
     const refreshToken = req.cookies.get("refreshToken")?.value;
 
-    const res = await fetch(`${BASE_URL}/token/verify-token`, {
+    const res = await fetch(`${CONFIG.BASE_URL}/token/verify-token`, {
       method: "POST",
       credentials: "include",
       headers: {

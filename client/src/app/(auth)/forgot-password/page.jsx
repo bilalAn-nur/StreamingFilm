@@ -1,5 +1,12 @@
-import AuthForm from "@/components/auth/AuthForm";
+import AuthForm from "@/components/auth/pages/AuthForm";
 
-export default function LoginPage() {
+export async function generateMetadata({ params, searchParams }) {
+  return {
+    title: "Forgot Password",
+    description: "Halaman Lupa Kata Sandi",
+  };
+}
+
+export default function SignInPage() {
   return <AuthForm type="forgot" />;
 }

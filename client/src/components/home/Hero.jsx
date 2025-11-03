@@ -1,36 +1,9 @@
 "use client";
-import { useState, useEffect } from "react";
+import useMovie from "@/lib/hooks/useMovie";
 import Image from "next/image";
 
 export default function Hero({ hoveredMovie }) {
-  const defaultMovie = {
-    posterUrl: "https://media.kitsu.app/anime/poster_images/13485/original.jpg",
-    bannerUrl: "",
-    title: "UMA MUSUME: CINDERELLA GRAY",
-    genres: ["Sports", "Slice of Life", "Comedy", "Drama", "Music"],
-    score: 8.9,
-    episodesCount: 24,
-    synopsis:
-      "Follow the story of aspiring horse girls striving to become the best on the track while balancing friendship, competition, and dreams.",
-  };
-
-  const [movie, setMovie] = useState(defaultMovie);
-  const [fade, setFade] = useState(false);
-
-  useEffect(() => {
-    const targetMovie = hoveredMovie || defaultMovie;
-    setFade(true);
-    const timeout = setTimeout(() => {
-      setMovie(targetMovie);
-      setFade(false);
-    }, 400);
-    return () => clearTimeout(timeout);
-  }, [hoveredMovie]);
-
-  const mainImage =
-    movie.bannerUrl && movie.bannerUrl.startsWith("http")
-      ? movie.bannerUrl
-      : movie.posterUrl;
+  const { movie, fade, mainImage } = useMovie(hoveredMovie);
 
   return (
     <div className="relative w-full md:ml-28 h-[600px] bg-black rounded-2xl overflow-hidden shadow-xl">

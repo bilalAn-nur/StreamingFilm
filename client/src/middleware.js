@@ -1,6 +1,6 @@
-import { requireAdmin } from "./middleware/admin";
-import { requireAuth } from "./middleware/auth";
-import { requireUser } from "./middleware/user";
+import { requireAdmin } from "./middleware/adminMiddleware";
+import { requireAuth } from "./middleware/authMiddleware";
+import { requireUser } from "./middleware/userMiddleware";
 
 export function middleware(req) {
   const url = req.nextUrl.pathname;

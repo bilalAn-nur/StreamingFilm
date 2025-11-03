@@ -1,5 +1,12 @@
-import AuthForm from "@/components/auth/AuthForm";
+import AuthForm from "@/components/auth/pages/AuthForm";
 
-export default function RegisterPage() {
-  return <AuthForm type="register" />;
+export async function generateMetadata({ params, searchParams }) {
+  return {
+    title: "Sign-in",
+    description: "Halaman Sign-in",
+  };
+}
+
+export default function SignUnPage() {
+  return <AuthForm type="signup" />;
 }
