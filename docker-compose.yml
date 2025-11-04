@@ -1,0 +1,37 @@
+
+services:
+  # Frontend: Next.js
+  client:
+    build: ./client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    env_file:
+      - ./client/.env.local
+    volumes:
+      - ./client:/app       # mount folder lokal supaya perubahan langsung terlihat
+      - /app/node_modules   # agar node_modules container tidak tertimpa
+
+  # Backend: Express
+  server:
+    build: ./server
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo
+    env_file:
+      - ./server/.env.development.local      # <-- ambil variabel environment dari file .env di folder server
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  # Database: MongoDB
+  mongo:
+    image: mongo:6
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

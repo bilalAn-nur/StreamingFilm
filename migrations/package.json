@@ -1,0 +1,8 @@
+{
+  "name": "migrations",
+  "version": "1.0.0",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "migrate-mongo": "^9.0.0"
+  }
+}

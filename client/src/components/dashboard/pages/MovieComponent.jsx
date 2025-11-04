@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Modal from "@/components/dashboard/Modal";
 import MovieForm from "@/components/dashboard/MovieForm";
-import Table from "@/components/dashboard/Table";
 import Input from "@/components/auth/Input";
+import Table from "../Table";
+import useTablePagination from "@/lib/hooks/useTable";
 
 export default function MovieComponent() {
   const [movies, setMovies] = useState([]);
@@ -37,7 +38,7 @@ export default function MovieComponent() {
         const res = await fetch("http://localhost:3001/api/v1/anime");
         if (!res.ok) throw new Error("Failed to fetch movies");
         const data = await res.json();
-        setMovies(data.data); // pastikan backend return array movie
+        setMovies(data.data);
       } catch (err) {
         console.error(err);
       }
@@ -79,6 +80,50 @@ export default function MovieComponent() {
     );
   };
 
+  const pagination = useTablePagination(movies, 10);
+
+  const columns = [
+    {
+      header: "Poster",
+      accessor: "imageUrl",
+      render: (val) =>
+        val ? (
+          <img src={val} className="w-12 h-16 object-cover rounded-md" />
+        ) : (
+          <div className="w-12 h-16 bg-gray-700 rounded-md" />
+        ),
+    },
+    { header: "Title", accessor: "title" },
+    { header: "Type", accessor: "type" },
+    { header: "Status", accessor: "status" },
+    { header: "Score", accessor: "score" },
+    {
+      header: "Genres",
+      accessor: "genres",
+      render: (val) => (val || []).join(", "),
+    },
+    {
+      header: "Actions",
+      accessor: "actions",
+      render: (_, item) => (
+        <div className="flex gap-2">
+          <button
+            onClick={() => onEdit(item)}
+            className="px-3 py-1 text-sm bg-yellow-400 text-white rounded"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => onDelete(item._id)}
+            className="px-3 py-1 text-sm bg-red-500 text-white rounded"
+          >
+            Delete
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white font-sans p-8">
       {/* Header */}
@@ -113,11 +158,7 @@ export default function MovieComponent() {
           </button>
         </div>
 
-        <Table
-          movies={filteredMovies}
-          onEdit={openEdit}
-          onDelete={handleDelete}
-        />
+        <Table data={movies} columns={columns} pagination={pagination} />
       </div>
 
       {/* Modal */}
