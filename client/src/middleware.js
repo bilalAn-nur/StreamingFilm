@@ -4,7 +4,7 @@ import { requireUser } from "./middleware/userMiddleware";
 
 export function middleware(req) {
   const url = req.nextUrl.pathname;
-  const refreshToken = req.cookies.get("refreshToken")?.value;
+  const refreshToken = req.cookies.get("accessToken")?.value;
 
   if (
     url.startsWith("/sign-in") ||

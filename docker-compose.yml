@@ -18,20 +18,9 @@ services:
     build: ./server
     ports:
       - "3001:3001"
-    depends_on:
-      - mongo
     env_file:
       - ./server/.env.development.local      # <-- ambil variabel environment dari file .env di folder server
     volumes:
       - ./server:/app
       - /app/node_modules
 
-  # Database: MongoDB
-  mongo:
-    image: mongo:6
-    restart: always
-    volumes:
-      - mongo-data:/data/db
-
-volumes:
-  mongo-data:

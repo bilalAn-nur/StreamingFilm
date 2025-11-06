@@ -8,6 +8,9 @@ const nextConfig = {
       "cdn.myanimelist.net",
     ], // tambahkan domain Drive
   },
+  experimental: {
+    allowedDevOrigins: ["http://127.0.0.1:3000"], // sesuaikan dengan frontend origin
+  },
 };
 
 export default nextConfig;

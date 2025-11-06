@@ -6,18 +6,22 @@ export const requireAuth = async (req) => {
     const accessToken = req.cookies.get("accessToken")?.value;
     const refreshToken = req.cookies.get("refreshToken")?.value;
 
-    const res = await fetch(`${CONFIG.BASE_URL}/token/verify-token`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        accessToken,
-        refreshToken,
-      }),
-    });
+    const res = await fetch(
+      `${CONFIG.BASE_URL_MIDDLEWARE}/token/verify-token`,
+      {
+        method: "POST",
+        // credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          accessToken,
+          refreshToken,
+        }),
+      }
+    );
     const data = await res.json();
+    console.log("coba ini");
     if (res.ok) {
       if (data.role === "admin") {
         return NextResponse.redirect(new URL("/dashboard", req.url));

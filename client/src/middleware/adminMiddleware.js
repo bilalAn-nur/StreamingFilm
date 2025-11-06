@@ -11,12 +11,15 @@ export const requireAdmin = async (req) => {
   }
 
   try {
-    const res = await fetch(`${CONFIG.BASE_URL}/token/verify-token`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ accessToken, refreshToken }),
-    });
+    const res = await fetch(
+      `${CONFIG.BASE_URL_MIDDLEWARE}/token/verify-token`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessToken, refreshToken }),
+      }
+    );
 
     const data = await res.json();
 

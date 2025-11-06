@@ -1,5 +1,6 @@
 const CONFIG = {
-    BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
-}
+  BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+  BASE_URL_MIDDLEWARE: process.env.NEXT_PUBLIC_BASE_URL_MIDDLEWARE,
+};
 
 export default CONFIG;

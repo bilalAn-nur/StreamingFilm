@@ -14,7 +14,9 @@ const app = express();
 app.set("json spaces", 2);
 app.use(
   cors({
-    origin: `http://localhost:${CLIENT_PORT || "3000"}`,
+    origin: `http://127.0.0.1:${CLIENT_PORT || "3000"}`,
+    // `http://localhost:${CLIENT_PORT || "3000"}`,
+
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -38,7 +40,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the server!");
 });
 
-app.listen(PORT, async () => {
+app.listen(PORT, "0.0.0.0", async () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   await connectToDatabase();
 });

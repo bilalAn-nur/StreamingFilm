@@ -1,3 +1,5 @@
+import CONFIG from "@/config";
+
 // lib/handlers/movie.js
 const token =
   typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
@@ -5,9 +7,7 @@ const token =
 export const fetchMergedAnime = async (query) => {
   try {
     const res = await fetch(
-      `http://localhost:3001/api/v1/anime/merged?q=${encodeURIComponent(
-        query
-      )}`,
+      `${CONFIG.BASE_URL}/anime/merged?q=${encodeURIComponent(query)}`,
       {
         method: "GET",
         headers: {
@@ -29,7 +29,7 @@ export const fetchMergedAnime = async (query) => {
 export const handleSubmitAnime = async (e, form, close, movies, setMovies) => {
   e.preventDefault();
   try {
-    const res = await fetch("http://localhost:3001/api/v1/anime", {
+    const res = await fetch(`${CONFIG.BASE_URL}/anime`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

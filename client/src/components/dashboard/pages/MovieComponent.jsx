@@ -6,6 +6,7 @@ import MovieForm from "@/components/dashboard/MovieForm";
 import Input from "@/components/auth/Input";
 import Table from "../Table";
 import useTablePagination from "@/lib/hooks/useTable";
+import CONFIG from "@/config";
 
 export default function MovieComponent() {
   const [movies, setMovies] = useState([]);
@@ -35,7 +36,7 @@ export default function MovieComponent() {
   useEffect(() => {
     async function fetchMovies() {
       try {
-        const res = await fetch("http://localhost:3001/api/v1/anime");
+        const res = await fetch(`${CONFIG.BASE_URL}/anime`);
         if (!res.ok) throw new Error("Failed to fetch movies");
         const data = await res.json();
         setMovies(data.data);
