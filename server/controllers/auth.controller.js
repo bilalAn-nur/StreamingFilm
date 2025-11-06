@@ -7,6 +7,8 @@ import {
   ACCESS_EXPIRES,
   REFRESH_SECRET,
   REFRESH_EXPIRES,
+  DOMAIN,
+  NODE_ENV,
   // NODE_ENV,
 } from "../config/env.js";
 import refreshTokenModel from "../models/refreshToken.model.js";
@@ -61,18 +63,20 @@ export const signup = async (req, res, next) => {
     // session.endSession();
     res.cookie("refreshToken", refreshToken, {
       // httpOnly: true,
-      // secure: NODE_ENV === "production",
+      secure: NODE_ENV === "production",
+      domain: DOMAIN,
       // path: "/",
       httpOnly: true,
-      secure: true,
+      // secure: true,
     });
 
     res.cookie("accessToken", accessToken, {
       // httpOnly: true,
-      // secure: NODE_ENV === "production",
+      secure: NODE_ENV === "production",
+      domain: DOMAIN,
       // path: "/",
       httpOnly: true,
-      secure: true,
+      // secure: true,
     });
 
     res.status(201).json({
@@ -127,18 +131,20 @@ export const signin = async (req, res, next) => {
 
     res.cookie("refreshToken", refreshToken, {
       // httpOnly: true,
-      // secure: NODE_ENV === "production",
+      secure: NODE_ENV === "production",
+      domain: DOMAIN,
       // path: "/",
       httpOnly: true,
-      secure: true,
+      // secure: true,
     });
 
     res.cookie("accessToken", accessToken, {
       // httpOnly: true,
-      // secure: NODE_ENV === "production",
+      secure: NODE_ENV === "production",
+      domain: DOMAIN,
       // path: "/",
       httpOnly: true,
-      secure: true,
+      // secure: true,
     });
 
     res.status(200).json({
@@ -175,17 +181,19 @@ export const signout = async (req, res, next) => {
     res.clearCookie("refreshToken", {
       // path: "/",
       // httpOnly: true,
-      // secure: NODE_ENV === "production",
+      domain: DOMAIN,
+      secure: NODE_ENV === "production",
       httpOnly: true,
-      secure: true,
+      // secure: true,
     });
 
     res.clearCookie("accessToken", {
       // path: "/",
       // httpOnly: true,
-      // secure: NODE_ENV === "production",
+      domain: DOMAIN,
+      secure: NODE_ENV === "production",
       httpOnly: true,
-      secure: true,
+      // secure: true,
     });
 
     res.status(200).json({ message: "Logged out successfully" });

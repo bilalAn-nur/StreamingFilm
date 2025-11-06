@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken";
 import {
   ACCESS_EXPIRES,
   ACCESS_SECRET,
+  DOMAIN,
+  NODE_ENV,
   REFRESH_SECRET,
 } from "../config/env.js";
 import refreshTokenModel from "../models/refreshToken.model.js";
@@ -53,7 +55,8 @@ export const refresh = async (req, res, next) => {
 
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
-      secure: true,
+      secure: NODE_ENV === "production",
+      domain: DOMAIN,
     });
 
     res.status(200).json({
@@ -118,7 +121,8 @@ export const verifyToken = async (req, res, next) => {
       // secure: NODE_ENV === "production",
       // path: "/",
       httpOnly: true,
-      secure: true,
+      secure: NODE_ENV === "production",
+      domain: DOMAIN,
     });
 
     const user = await User.findById(decodedRefresh.userId).select("role");

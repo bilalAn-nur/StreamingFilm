@@ -14,8 +14,11 @@ const app = express();
 app.set("json spaces", 2);
 app.use(
   cors({
-    origin: `http://127.0.0.1:${CLIENT_PORT || "3000"}`,
-    // `http://localhost:${CLIENT_PORT || "3000"}`,
+    origin: [
+      `http://192.168.2.154:${CLIENT_PORT || "3000"}`,
+      `http://127.0.0.1:${CLIENT_PORT || "3000"}`,
+      `http://localhost:${CLIENT_PORT || "3000"}`,
+    ],
 
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -27,7 +30,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
-app.use(arcjetMiddleware);
+// app.use(arcjetMiddleware);
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
@@ -40,7 +43,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the server!");
 });
 
-app.listen(PORT, "0.0.0.0", async () => {
+app.listen(PORT, async () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   await connectToDatabase();
 });

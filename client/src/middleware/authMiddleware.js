@@ -6,6 +6,23 @@ export const requireAuth = async (req) => {
     const accessToken = req.cookies.get("accessToken")?.value;
     const refreshToken = req.cookies.get("refreshToken")?.value;
 
+    if (refreshToken) {
+      const res = await fetch(
+        `${CONFIG.BASE_URL_MIDDLEWARE}/token/verify-token`,
+        {
+          method: "POST",
+          // credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            accessToken,
+            refreshToken,
+          }),
+        }
+      );
+    }
+
     const res = await fetch(
       `${CONFIG.BASE_URL_MIDDLEWARE}/token/verify-token`,
       {

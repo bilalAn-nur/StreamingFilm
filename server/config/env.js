@@ -15,4 +15,5 @@ export const {
   ARCJET_ENV,
   JIKAN_URL,
   KITSU_URL,
+  DOMAIN,
 } = process.env;

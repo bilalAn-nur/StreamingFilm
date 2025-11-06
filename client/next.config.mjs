@@ -9,7 +9,7 @@ const nextConfig = {
     ], // tambahkan domain Drive
   },
   experimental: {
-    allowedDevOrigins: ["http://127.0.0.1:3000"], // sesuaikan dengan frontend origin
+    allowedDevOrigins: ["http://192.168.2.154:3000"], // sesuaikan dengan frontend origin
   },
 };
 
