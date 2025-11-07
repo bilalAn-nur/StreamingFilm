@@ -1,7 +1,7 @@
 "use client";
 import { useState, useMemo } from "react";
 
-export default function useTablePagination(items = [], itemsPerPage = 10) {
+export default function useTable(items = [], itemsPerPage = 10) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = useMemo(

@@ -1,4 +1,5 @@
 import CONFIG from "@/config";
+import api from "@/utils/axios";
 
 // lib/handlers/movie.js
 const token =
@@ -17,7 +18,7 @@ export const fetchMergedAnime = async (query) => {
         credentials: "include",
       }
     );
-    if (!res.ok) throw new Error("Failed to fetch merged anime");
+    if (!res.ok) return err;
     const data = await res.json();
     return data;
   } catch (err) {
@@ -29,6 +30,7 @@ export const fetchMergedAnime = async (query) => {
 export const handleSubmitAnime = async (e, form, close, movies, setMovies) => {
   e.preventDefault();
   try {
+    const res2 = await api.post("/anime", form);
     const res = await fetch(`${CONFIG.BASE_URL}/anime`, {
       method: "POST",
       headers: {
@@ -38,6 +40,7 @@ export const handleSubmitAnime = async (e, form, close, movies, setMovies) => {
       credentials: "include",
       body: JSON.stringify(form),
     });
+    console.log(res2);
 
     const text = await res.text();
     const data = JSON.parse(text);

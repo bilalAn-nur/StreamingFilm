@@ -38,7 +38,6 @@ export const requireAuth = async (req) => {
       }
     );
     const data = await res.json();
-    console.log("coba ini");
     if (res.ok) {
       if (data.role === "admin") {
         return NextResponse.redirect(new URL("/dashboard", req.url));

@@ -1,6 +1,7 @@
 "use client";
 
-import { fetchMergedAnime, handleSubmitAnime } from "@/lib/handlers/movie";
+import { fetchMergedAnime } from "@/lib/handlers/movie";
+import useMovieDashboard from "@/lib/hooks/useMovieDashboard";
 import { useState, useEffect } from "react";
 
 export default function MovieForm({
@@ -19,6 +20,8 @@ export default function MovieForm({
   const [selectedAnime, setSelectedAnime] = useState(
     form.title ? { ...form } : null
   );
+
+  const { addAnime } = useMovieDashboard();
 
   // Fetch anime dari API
   useEffect(() => {
@@ -41,7 +44,7 @@ export default function MovieForm({
   };
 
   const handleChange = (e) => {
-    if (!selectedAnime) setQuery(e.target.value);
+    if (!selectedAnime) setQuery(e.target.value.toLowerCase());
   };
 
   const handleReset = () => {
@@ -65,7 +68,7 @@ export default function MovieForm({
 
   return (
     <form
-      onSubmit={(e) => handleSubmitAnime(e, form, close, movies, setMovies)}
+      onSubmit={(e) => addAnime(e, form, close, movies, setMovies)}
       className="p-4 space-y-6 bg-gray-800 rounded-xl shadow-lg"
     >
       {/* Input Title */}

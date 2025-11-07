@@ -10,36 +10,6 @@ export default function Table({ data = [], columns = [], pagination }) {
     goToPage,
   } = pagination;
 
-  const renderPageButtons = () =>
-    Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-      if (
-        page === 1 ||
-        page === totalPages ||
-        (page >= currentPage - 1 && page <= currentPage + 1)
-      ) {
-        return (
-          <button
-            key={page}
-            onClick={() => goToPage(page)}
-            className={`px-3 py-1 rounded ${
-              page === currentPage
-                ? "bg-red-600 text-white"
-                : "bg-gray-700 hover:bg-gray-600 cursor-pointer"
-            }`}
-          >
-            {page}
-          </button>
-        );
-      } else if (page === currentPage - 2 || page === currentPage + 2) {
-        return (
-          <span key={page} className="px-2">
-            ...
-          </span>
-        );
-      }
-      return null;
-    });
-
   return (
     <div className="overflow-x-auto w-full">
       {/* Desktop */}
@@ -129,7 +99,34 @@ export default function Table({ data = [], columns = [], pagination }) {
             Page {currentPage} / {totalPages}
           </span>
           <div className="hidden sm:flex items-center gap-1">
-            {renderPageButtons()}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+              if (
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 1 && page <= currentPage + 1)
+              ) {
+                return (
+                  <button
+                    key={page}
+                    onClick={() => goToPage(page)}
+                    className={`px-3 py-1 rounded ${
+                      page === currentPage
+                        ? "bg-red-600 text-white"
+                        : "bg-gray-700 hover:bg-gray-600 cursor-pointer"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                );
+              } else if (page === currentPage - 2 || page === currentPage + 2) {
+                return (
+                  <span key={page} className="px-2">
+                    ...
+                  </span>
+                );
+              }
+              return null;
+            })}
           </div>
           <button
             onClick={nextPage}

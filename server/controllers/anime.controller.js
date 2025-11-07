@@ -90,13 +90,14 @@ export const likeAnime = async (req, res, next) => {
 export const mergedAnimeAPI = async (req, res, next) => {
   const query = req.query.q;
   if (!query) return res.status(400).json({ message: "Query is required" });
+  setTimeout(() => console.log(""), 3000);
 
   try {
-    // 1️⃣ Ambil data anime yang sudah ada dari database
+    // Ambil data anime yang sudah ada dari database
     const existingMovies = await Anime.find({});
     const existingMalIds = existingMovies.map((m) => m.mal_id);
 
-    // 2️⃣ Ambil data dari Jikan
+    // Ambil data dari Jikan
     const jikanRes = await fetch(
       `${JIKAN_URL}/anime?q=${encodeURIComponent(query)}&limit=10`
     );
@@ -107,7 +108,7 @@ export const mergedAnimeAPI = async (req, res, next) => {
       (anime) => !existingMalIds.includes(anime.mal_id)
     );
 
-    // 3️⃣ Ambil data Kitsu dan gabungkan
+    // Ambil data Kitsu dan gabungkan
     const results = await Promise.all(
       filteredJikan.map(async (anime) => {
         const kitsuRes = await fetch(

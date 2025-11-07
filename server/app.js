@@ -5,21 +5,16 @@ import authRouter from "./routes/auth.routes.js";
 import connectToDatabase from "./database/mongodb.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 import cookieParser from "cookie-parser";
-import arcjetMiddleware from "./middlewares/arcjet.middleware.js";
 import cors from "cors";
 import tokenRouter from "./routes/token.routes.js";
 import animeRouter from "./routes/anime.routes.js";
 
 const app = express();
 app.set("json spaces", 2);
+console.log(CLIENT_PORT);
 app.use(
   cors({
-    origin: [
-      `http://192.168.2.154:${CLIENT_PORT || "3000"}`,
-      `http://127.0.0.1:${CLIENT_PORT || "3000"}`,
-      `http://localhost:${CLIENT_PORT || "3000"}`,
-    ],
-
+    origin: CLIENT_PORT,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
