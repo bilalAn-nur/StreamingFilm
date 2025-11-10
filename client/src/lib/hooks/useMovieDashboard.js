@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import useTable from "@/lib/hooks/useTable";
 import api from "@/utils/axios";
-import CONFIG from "@/config";
+import { handleSubmitAnime } from "../actions/movieAction";
 
 export default function useMovieDashboard(itemsPerPage = 10) {
   const [allMovies, setAllMovies] = useState([]);
@@ -46,24 +46,7 @@ export default function useMovieDashboard(itemsPerPage = 10) {
   const addAnime = async (e, form, close, movies, setMovies) => {
     e.preventDefault();
     try {
-      const res = await api.post("/anime", form);
-      console.log(res);
-
-      // const text = await res.text();
-      // const data = JSON.parse(text);
-
-      if (!res.status) throw new Error(`Gagal submit`);
-
-      // Pastikan data baru berbentuk object
-      const newMovie = Array.isArray(res.data.data)
-        ? res.data.data[0]
-        : res.data.data;
-
-      // Update state
-      setMovies((prev) => [newMovie, ...prev]);
-
-      // Tutup modal
-      close();
+      handleSubmitAnime(e, form, close, movies, setMovies);
     } catch (err) {
       console.error("Error handleSubmitAnime:", err);
       alert("Gagal mengirim data. Lihat console untuk detail.");
